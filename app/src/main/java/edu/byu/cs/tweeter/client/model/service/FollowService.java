@@ -22,7 +22,7 @@ public class FollowService {
     }
 
     public interface FollowersObserver {
-        // abstract methods.test
+        // abstract methods
     }
 
     private class GetFollowingHandler extends Handler {
