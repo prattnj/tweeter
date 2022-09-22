@@ -22,11 +22,9 @@ public class FollowingPresenter {
     }
 
     public interface View {
-
         void displayMessage(String message);
         void setLoadingFooter(boolean add);
         void addFollowees(List<User> followees);
-
     }
 
     private class FollowingObserver implements FollowService.FollowingObserver {
@@ -58,7 +56,7 @@ public class FollowingPresenter {
     public void loadMoreItems(User user) {
         isLoading = true;
         view.setLoadingFooter(true);
-        service.loadMoreItems(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollowee, new FollowingObserver());
+        service.loadMoreFollowing(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollowee, new FollowingObserver());
     }
 
     public boolean isLoading() {

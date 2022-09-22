@@ -35,17 +35,11 @@ import edu.byu.cs.tweeter.model.domain.User;
  */
 public class FollowingFragment extends Fragment implements FollowingPresenter.View {
 
-    private static final String LOG_TAG = "FollowingFragment";
     private static final String USER_KEY = "UserKey";
-
     private static final int LOADING_DATA_VIEW = 0;
     private static final int ITEM_VIEW = 1;
-
-
     private User user;
-
     private FollowingRecyclerViewAdapter followingRecyclerViewAdapter;
-
     private FollowingPresenter presenter;
 
     /**
@@ -70,6 +64,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_following, container, false);
 
+        //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
 
         RecyclerView followingRecyclerView = view.findViewById(R.id.followingRecyclerView);
@@ -131,7 +126,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
                     /*GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
                             userAlias.getText().toString(), new GetUserHandler());
                     ExecutorService executor = Executors.newSingleThreadExecutor();
-                    executor.execute(getUserTask);*/
+                    executor.execute(getUserTask);*/ // todo move
                     Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
                 }
             });
@@ -151,13 +146,12 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
         /**
          * Message handler (i.e., observer) for GetUserTask.
          */
-        private class GetUserHandler extends Handler {
+        private class GetUserHandler extends Handler { // todo move
             @Override
             public void handleMessage(@NonNull Message msg) {
                 boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
                 if (success) {
                     User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
-
                     Intent intent = new Intent(getContext(), MainActivity.class);
                     intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
                     startActivity(intent);
@@ -178,7 +172,6 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
     private class FollowingRecyclerViewAdapter extends RecyclerView.Adapter<FollowingHolder> {
 
         private final List<User> users = new ArrayList<>();
-
 
         /**
          * Adds new users to the list from which the RecyclerView retrieves the users it displays
@@ -281,15 +274,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
          * data.
          */
         void loadMoreItems() {
-            if (!presenter.isLoading()) {   // This guard is important for avoiding a race condition in the scrolling code.
-
-                presenter.loadMoreItems(user);
-                /*presenter.loadMoreItems(user, PAGE_SIZE, lastFollowee)
-                GetFollowingTask getFollowingTask = new GetFollowingTask(Cache.getInstance().getCurrUserAuthToken(),
-                        user, PAGE_SIZE, lastFollowee, new GetFollowingHandler());
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(getFollowingTask);*/
-            }
+            if (!presenter.isLoading()) presenter.loadMoreItems(user);
         }
 
         /**
@@ -307,11 +292,6 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
         private void removeLoadingFooter() {
             removeItem(users.get(users.size() - 1));
         }
-
-
-        /**
-         * Message handler (i.e., observer) for GetFollowingTask.
-         */
 
     }
 
