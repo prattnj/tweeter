@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.client.R;
-import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.client.presenter.FollowingPresenter;
 import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -40,7 +38,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
     private static final int ITEM_VIEW = 1;
     private User user;
     private FollowingRecyclerViewAdapter followingRecyclerViewAdapter;
-    private FollowingPresenter presenter;
+    private final FollowingPresenter presenter = new FollowingPresenter(this);
 
     /**
      * Creates an instance of the fragment and places the target user in an arguments
@@ -77,7 +75,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
 
         followingRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
 
-        presenter = new FollowingPresenter(this);
+        //presenter = new FollowingPresenter(this);
         followingRecyclerViewAdapter.loadMoreItems();
 
         return view;
@@ -97,6 +95,13 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
     @Override
     public void addFollowees(List<User> followees) {
         followingRecyclerViewAdapter.addItems(followees);
+    }
+
+    @Override
+    public void displayUser(User user) {
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
+        startActivity(intent);
     }
 
     /**
@@ -120,15 +125,9 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             userAlias = itemView.findViewById(R.id.userAlias);
             userName = itemView.findViewById(R.id.userName);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    /*GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
-                            userAlias.getText().toString(), new GetUserHandler());
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    executor.execute(getUserTask);*/ // todo move
-                    Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
-                }
+            itemView.setOnClickListener(view -> {
+                presenter.goToUser(userAlias.getText().toString());
+                Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
             });
         }
 
@@ -141,28 +140,6 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             userAlias.setText(user.getAlias());
             userName.setText(user.getName());
             Picasso.get().load(user.getImageUrl()).into(userImage);
-        }
-
-        /**
-         * Message handler (i.e., observer) for GetUserTask.
-         */
-        private class GetUserHandler extends Handler { // todo move
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
-                if (success) {
-                    User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
-                    Intent intent = new Intent(getContext(), MainActivity.class);
-                    intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
-                    startActivity(intent);
-                } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
-                    String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
-                    Toast.makeText(getContext(), "Failed to get user's profile: " + message, Toast.LENGTH_LONG).show();
-                } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
-                    Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
-                    Toast.makeText(getContext(), "Failed to get user's profile because of exception: " + ex.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
         }
     }
 
@@ -330,13 +307,10 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
             if (!presenter.isLoading() && presenter.hasMorePages()) {
-                if ((visibleItemCount + firstVisibleItemPosition) >=
-                        totalItemCount && firstVisibleItemPosition >= 0) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
                     // Run this code later on the UI thread
                     final Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(() -> {
-                        followingRecyclerViewAdapter.loadMoreItems();
-                    }, 0);
+                    handler.postDelayed(() -> followingRecyclerViewAdapter.loadMoreItems(), 0);
                 }
             }
         }

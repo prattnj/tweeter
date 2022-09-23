@@ -24,13 +24,6 @@ public class UserService {
         // abstract methods
     }
 
-    public void login(String username, String password, LoginObserver observer) {
-        // Run the LoginTask in the background to log the user in
-        LoginTask loginTask = new LoginTask(username, password, new LoginHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(loginTask);
-    }
-
     private class LoginHandler extends Handler {
 
         private LoginObserver observer;
@@ -59,6 +52,13 @@ public class UserService {
                 observer.loginFailed("Failed to login because of exception: " + ex.getMessage());
             }
         }
+    }
+
+    public void login(String username, String password, LoginObserver observer) {
+        // Run the LoginTask in the background to log the user in
+        LoginTask loginTask = new LoginTask(username, password, new LoginHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(loginTask);
     }
 
 }

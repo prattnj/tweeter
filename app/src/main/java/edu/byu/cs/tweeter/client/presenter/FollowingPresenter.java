@@ -8,13 +8,13 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowingPresenter {
 
-    private static final int PAGE_SIZE = 10;
-    private FollowService service;
-    private User lastFollowee;
+    private final FollowService service;
+    private final View view;
 
+    private User lastFollowee;
+    private static final int PAGE_SIZE = 10;
     private boolean hasMorePages;
     private boolean isLoading = false;
-    private View view;
 
     public FollowingPresenter(View view) {
         this.view = view;
@@ -25,17 +25,18 @@ public class FollowingPresenter {
         void displayMessage(String message);
         void setLoadingFooter(boolean add);
         void addFollowees(List<User> followees);
+        void displayUser(User user);
     }
 
     private class FollowingObserver implements FollowService.FollowingObserver {
 
         @Override
         public void displayMoreFollowees(List<User> followees, boolean hasMorePages) {
+            isLoading = false;
             view.setLoadingFooter(false);
             lastFollowee = (followees.size() > 0) ? followees.get(followees.size() - 1) : null;
             view.addFollowees(followees);
             FollowingPresenter.this.hasMorePages = hasMorePages;
-            isLoading = false;
         }
 
         @Override
@@ -51,6 +52,25 @@ public class FollowingPresenter {
             view.setLoadingFooter(false);
             view.displayMessage("Failed to get following because of exception: " + e.getMessage());
         }
+
+        @Override
+        public void displayUser(User user) {
+            view.displayUser(user);
+        }
+
+        @Override
+        public void displayUserErrorMessage(String message) {
+            view.displayMessage("Failed to get user's profile: " + message);
+        }
+
+        @Override
+        public void displayUserException(Exception e) {
+            view.displayMessage("Failed to get user's profile because of exception: " + e.getMessage());
+        }
+    }
+
+    public void goToUser(String username) {
+        service.getUserFollowing(Cache.getInstance().getCurrUserAuthToken(), username, new FollowingObserver());
     }
 
     public void loadMoreItems(User user) {

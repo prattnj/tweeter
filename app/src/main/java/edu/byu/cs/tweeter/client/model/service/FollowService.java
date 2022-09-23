@@ -2,7 +2,6 @@ package edu.byu.cs.tweeter.client.model.service;
 
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -12,6 +11,7 @@ import java.util.concurrent.Executors;
 
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
+import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -21,17 +21,23 @@ public class FollowService {
         void displayMoreFollowees(List<User> followers, boolean hasMorePages);
         void displayErrorMessage(String message);
         void displayException(Exception e);
+        void displayUser(User user);
+        void displayUserErrorMessage(String message);
+        void displayUserException(Exception e);
     }
 
     public interface FollowersObserver {
         void displayMoreFollowers(List<User> followers, boolean hasMorePages);
         void displayErrorMessage(String message);
         void displayException(Exception e);
+        void displayUser(User user);
+        void displayUserErrorMessage(String message);
+        void displayUserException(Exception e);
     }
 
-    private class GetFollowingHandler extends Handler {
+    private static class GetFollowingHandler extends Handler {
 
-        private FollowingObserver observer;
+        private final FollowingObserver observer;
 
         public GetFollowingHandler(FollowingObserver observer) {
             this.observer = observer;
@@ -39,8 +45,6 @@ public class FollowService {
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-
-
             boolean success = msg.getData().getBoolean(GetFollowingTask.SUCCESS_KEY);
             if (success) {
                 List<User> followees = (List<User>) msg.getData().getSerializable(GetFollowingTask.FOLLOWEES_KEY);
@@ -56,9 +60,9 @@ public class FollowService {
         }
     }
 
-    private class GetFollowersHandler extends Handler {
+    private static class GetFollowersHandler extends Handler {
 
-        private FollowersObserver observer;
+        private final FollowersObserver observer;
 
         public GetFollowersHandler(FollowersObserver observer) {
             this.observer = observer;
@@ -81,6 +85,40 @@ public class FollowService {
         }
     }
 
+    private static class GetUserHandler extends Handler {
+
+        private FollowingObserver followingObserver;
+        private FollowersObserver followersObserver;
+        private final int type; // 1 (Following) or 2 (Followers), avoids duplication of this class
+
+        public GetUserHandler(FollowingObserver observer) {
+            followingObserver = observer;
+            type = 1;
+        }
+        public GetUserHandler(FollowersObserver observer) {
+            followersObserver = observer;
+            type = 2;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
+            if (success) {
+                User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
+                if (type == 1) followingObserver.displayUser(user);
+                else followersObserver.displayUser(user);
+            } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
+                if (type == 1) followingObserver.displayUserErrorMessage(message);
+                else followersObserver.displayUserErrorMessage(message);
+            } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
+                if (type == 1) followingObserver.displayUserException(ex);
+                else followersObserver.displayUserException(ex);
+            }
+        }
+    }
+
     public void loadMoreFollowing(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, FollowingObserver followingObserver) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken,
                 user, pageSize, lastFollowee, new GetFollowingHandler(followingObserver));
@@ -93,6 +131,20 @@ public class FollowService {
                 user, pageSize, lastFollower, new GetFollowersHandler(followersObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowersTask);
+    }
+
+    public void getUserFollowing(AuthToken currUserAuthToken, String username, FollowingObserver observer) {
+        GetUserTask getUserTask = new GetUserTask(currUserAuthToken,
+                username, new GetUserHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getUserTask);
+    }
+
+    public void getUserFollowers(AuthToken currUserAuthToken, String username, FollowersObserver observer) {
+        GetUserTask getUserTask = new GetUserTask(currUserAuthToken,
+                username, new GetUserHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getUserTask);
     }
 
 }
