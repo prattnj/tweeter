@@ -6,8 +6,8 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class LoginPresenter {
 
-    private UserService service;
-    private View view;
+    private final UserService service;
+    private final View view;
 
     public LoginPresenter(LoginPresenter.View view) {
         this.view = view;
