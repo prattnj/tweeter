@@ -70,13 +70,13 @@ public class FollowingPresenter {
     }
 
     public void goToUser(String username) {
-        service.getUserFollowing(Cache.getInstance().getCurrUserAuthToken(), username, new FollowingObserver());
+        service.getUser_Following(Cache.getInstance().getCurrUserAuthToken(), username, new FollowingObserver());
     }
 
     public void loadMoreItems(User user) {
         isLoading = true;
         view.setLoadingFooter(true);
-        service.loadMoreFollowing(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollowee, new FollowingObserver());
+        service.loadMore_Following(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollowee, new FollowingObserver());
     }
 
     public boolean isLoading() {

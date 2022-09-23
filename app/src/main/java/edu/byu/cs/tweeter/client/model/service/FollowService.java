@@ -119,28 +119,28 @@ public class FollowService {
         }
     }
 
-    public void loadMoreFollowing(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, FollowingObserver followingObserver) {
+    public void loadMore_Following(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, FollowingObserver followingObserver) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken,
                 user, pageSize, lastFollowee, new GetFollowingHandler(followingObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowingTask);
     }
 
-    public void loadMoreFollowers(AuthToken currUserAuthToken, User user, int pageSize, User lastFollower, FollowersObserver followersObserver) {
+    public void loadMore_Followers(AuthToken currUserAuthToken, User user, int pageSize, User lastFollower, FollowersObserver followersObserver) {
         GetFollowersTask getFollowersTask = new GetFollowersTask(currUserAuthToken,
                 user, pageSize, lastFollower, new GetFollowersHandler(followersObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowersTask);
     }
 
-    public void getUserFollowing(AuthToken currUserAuthToken, String username, FollowingObserver observer) {
+    public void getUser_Following(AuthToken currUserAuthToken, String username, FollowingObserver observer) {
         GetUserTask getUserTask = new GetUserTask(currUserAuthToken,
                 username, new GetUserHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getUserTask);
     }
 
-    public void getUserFollowers(AuthToken currUserAuthToken, String username, FollowersObserver observer) {
+    public void getUser_Followers(AuthToken currUserAuthToken, String username, FollowersObserver observer) {
         GetUserTask getUserTask = new GetUserTask(currUserAuthToken,
                 username, new GetUserHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
