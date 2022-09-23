@@ -9,24 +9,27 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import edu.byu.cs.tweeter.client.backgroundTask.LoginTask;
-import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.backgroundTask.RegisterTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class UserService {
 
     public interface LoginObserver {
-        void loginSucceeded(User user, AuthToken authToken);
-        void loginFailed(String message);
+        void loginSuccess(User user);
+        void loginFail(String message);
+        void cacheSession(User loggedInUser, AuthToken authToken);
     }
 
     public interface RegisterObserver {
-        // abstract methods
+        void registerSuccess(User registeredUser);
+        void registerFail(String message);
+        void cacheSession(User registeredUser, AuthToken authToken);
     }
 
-    private class LoginHandler extends Handler {
+    private static class LoginHandler extends Handler {
 
-        private LoginObserver observer;
+        private final LoginObserver observer;
 
         public LoginHandler(LoginObserver observer) {
             this.observer = observer;
@@ -38,27 +41,54 @@ public class UserService {
             if (success) {
                 User loggedInUser = (User) msg.getData().getSerializable(LoginTask.USER_KEY);
                 AuthToken authToken = (AuthToken) msg.getData().getSerializable(LoginTask.AUTH_TOKEN_KEY);
-
-                // Cache user session information
-                Cache.getInstance().setCurrUser(loggedInUser);
-                Cache.getInstance().setCurrUserAuthToken(authToken);
-
-                observer.loginSucceeded(loggedInUser, authToken);
+                observer.cacheSession(loggedInUser, authToken); // Cache user session information
+                observer.loginSuccess(loggedInUser);
             } else if (msg.getData().containsKey(LoginTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(LoginTask.MESSAGE_KEY);
-                observer.loginFailed("Failed to login: " + message);
+                observer.loginFail("Failed to login: " + message);
             } else if (msg.getData().containsKey(LoginTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(LoginTask.EXCEPTION_KEY);
-                observer.loginFailed("Failed to login because of exception: " + ex.getMessage());
+                observer.loginFail("Failed to login because of exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    private static class RegisterHandler extends Handler {
+
+        private final RegisterObserver observer;
+
+        public RegisterHandler(RegisterObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(RegisterTask.SUCCESS_KEY);
+            if (success) {
+                User registeredUser = (User) msg.getData().getSerializable(RegisterTask.USER_KEY);
+                AuthToken authToken = (AuthToken) msg.getData().getSerializable(RegisterTask.AUTH_TOKEN_KEY);
+                observer.cacheSession(registeredUser, authToken);
+                observer.registerSuccess(registeredUser);
+            } else if (msg.getData().containsKey(RegisterTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(RegisterTask.MESSAGE_KEY);
+                observer.registerFail("Failed to register: " + message);
+            } else if (msg.getData().containsKey(RegisterTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(RegisterTask.EXCEPTION_KEY);
+                observer.registerFail("Failed to register because of exception: " + ex.getMessage());
             }
         }
     }
 
     public void login(String username, String password, LoginObserver observer) {
-        // Run the LoginTask in the background to log the user in
         LoginTask loginTask = new LoginTask(username, password, new LoginHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(loginTask);
+    }
+
+    public void register(String firstName, String lastName, String alias, String password, String imageBytesBase64, RegisterObserver observer) {
+        RegisterTask registerTask = new RegisterTask(firstName, lastName, alias, password, imageBytesBase64, new RegisterHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(registerTask);
     }
 
 }
