@@ -41,32 +41,17 @@ public class StoryPresenter {
         }
 
         @Override
-        public void displayErrorMessage(String message) {
-            isLoading = false;
-            view.setLoadingFooter(false);
-            view.displayMessage("Failed to get status: " + message);
-        }
-
-        @Override
-        public void displayException(Exception e) {
-            isLoading = false;
-            view.setLoadingFooter(false);
-            view.displayMessage("Failed to get status because of exception: " + e.getMessage());
-        }
-
-        @Override
         public void displayUser(User user) {
             view.displayUser(user);
         }
 
         @Override
-        public void displayUserErrorMessage(String message) {
-            view.displayMessage("Failed to get user's profile: " + message);
-        }
-
-        @Override
-        public void displayUserException(Exception e) {
-            view.displayMessage("Failed to get user's profile because of exception: " + e.getMessage());
+        public void fail(String message, boolean isUserRelated) {
+            if (!isUserRelated) {
+                isLoading = false;
+                view.setLoadingFooter(false);
+            }
+            view.displayMessage(message);
         }
     }
 

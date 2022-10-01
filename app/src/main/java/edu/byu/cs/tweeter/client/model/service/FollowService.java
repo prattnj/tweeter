@@ -9,31 +9,46 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.byu.cs.tweeter.client.backgroundTask.FollowTask;
+import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersTask;
+import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
+import edu.byu.cs.tweeter.client.backgroundTask.IsFollowerTask;
+import edu.byu.cs.tweeter.client.backgroundTask.UnfollowTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService {
 
+    // OBSERVERS
+
     public interface FollowingObserver {
         void displayMoreFollowees(List<User> followers, boolean hasMorePages);
-        void displayErrorMessage(String message);
-        void displayException(Exception e);
         void displayUser(User user);
-        void displayUserErrorMessage(String message);
-        void displayUserException(Exception e);
+        void fail(String message, boolean isUserRelated);
     }
 
     public interface FollowersObserver {
         void displayMoreFollowers(List<User> followers, boolean hasMorePages);
-        void displayErrorMessage(String message);
-        void displayException(Exception e);
         void displayUser(User user);
-        void displayUserErrorMessage(String message);
-        void displayUserException(Exception e);
+        void fail(String message, boolean isUserRelated);
     }
+
+    public interface MainObserver {
+        void getFollowersCountSuccess(int count);
+        void getFollowingCountSuccess(int count);
+        void isFollowingSuccess(boolean isFollower);
+        void followSuccess();
+        void unfollowSuccess();
+        void fail(String message);
+        void enableFollowButton();
+    }
+
+
+
+    // HANDLERS
 
     private static class GetFollowingHandler extends Handler {
 
@@ -52,10 +67,10 @@ public class FollowService {
                 observer.displayMoreFollowees(followees, hasMorePages);
             } else if (msg.getData().containsKey(GetFollowingTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(GetFollowingTask.MESSAGE_KEY);
-                observer.displayErrorMessage(message);
+                observer.fail("Failed to get user's profile: " + message, false);
             } else if (msg.getData().containsKey(GetFollowingTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(GetFollowingTask.EXCEPTION_KEY);
-                observer.displayException(ex);
+                observer.fail("Failed to get user's profile because of exception: " + ex.getMessage(), false);
             }
         }
     }
@@ -77,10 +92,10 @@ public class FollowService {
                 observer.displayMoreFollowers(followers, hasMorePages);
             } else if (msg.getData().containsKey(GetFollowersTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(GetFollowersTask.MESSAGE_KEY);
-                observer.displayErrorMessage(message);
+                observer.fail("Failed to get followers: " + message, false);
             } else if (msg.getData().containsKey(GetFollowersTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(GetFollowersTask.EXCEPTION_KEY);
-                observer.displayException(ex);
+                observer.fail("Failed to get followers because of exception: " + ex.getMessage(), false);
             }
         }
     }
@@ -109,42 +124,195 @@ public class FollowService {
                 else followersObserver.displayUser(user);
             } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
                 String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
-                if (type == 1) followingObserver.displayUserErrorMessage(message);
-                else followersObserver.displayUserErrorMessage(message);
+                if (type == 1) followingObserver.fail("Failed to get user's profile: " + message, true);
+                else followersObserver.fail("Failed to get user's profile: " + message, true);
             } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
-                if (type == 1) followingObserver.displayUserException(ex);
-                else followersObserver.displayUserException(ex);
+                if (type == 1) followingObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
+                else followersObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
             }
         }
     }
 
+    private static class GetFollowersCountHandler extends Handler {
+
+        private final MainObserver observer;
+
+        public GetFollowersCountHandler(MainObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(GetFollowersCountTask.SUCCESS_KEY);
+            if (success) {
+                int count = msg.getData().getInt(GetFollowersCountTask.COUNT_KEY);
+                observer.getFollowersCountSuccess(count);
+            } else if (msg.getData().containsKey(GetFollowersCountTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(GetFollowersCountTask.MESSAGE_KEY);
+                observer.fail("Failed to get followers count: " + message);
+            } else if (msg.getData().containsKey(GetFollowersCountTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(GetFollowersCountTask.EXCEPTION_KEY);
+                observer.fail("Failed to get followers count because of exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    private static class GetFollowingCountHandler extends Handler {
+
+        private final MainObserver observer;
+
+        public GetFollowingCountHandler(MainObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(GetFollowingCountTask.SUCCESS_KEY);
+            if (success) {
+                int count = msg.getData().getInt(GetFollowingCountTask.COUNT_KEY);
+                observer.getFollowingCountSuccess(count);
+            } else if (msg.getData().containsKey(GetFollowingCountTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(GetFollowingCountTask.MESSAGE_KEY);
+                observer.fail("Failed to get following count: " + message);
+            } else if (msg.getData().containsKey(GetFollowingCountTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(GetFollowingCountTask.EXCEPTION_KEY);
+                observer.fail("Failed to get following count because of exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    private static class IsFollowerHandler extends Handler {
+
+        private final MainObserver observer;
+
+        public IsFollowerHandler(MainObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(IsFollowerTask.SUCCESS_KEY);
+            if (success) {
+                boolean isFollower = msg.getData().getBoolean(IsFollowerTask.IS_FOLLOWER_KEY);
+                // If logged in user if a follower of the selected user, display the follow button as "following"
+                observer.isFollowingSuccess(isFollower);
+            } else if (msg.getData().containsKey(IsFollowerTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(IsFollowerTask.MESSAGE_KEY);
+                observer.fail("Failed to determine following relationship: " + message);
+            } else if (msg.getData().containsKey(IsFollowerTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(IsFollowerTask.EXCEPTION_KEY);
+                observer.fail("Failed to determine following relationship because of exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    private static class FollowHandler extends Handler {
+
+        private final MainObserver observer;
+
+        public FollowHandler(MainObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(FollowTask.SUCCESS_KEY);
+            if (success) {
+                observer.followSuccess();
+            } else if (msg.getData().containsKey(FollowTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(FollowTask.MESSAGE_KEY);
+                observer.fail("Failed to follow: " + message);
+            } else if (msg.getData().containsKey(FollowTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(FollowTask.EXCEPTION_KEY);
+                observer.fail("Failed to follow because of exception: " + ex.getMessage());
+            }
+
+            observer.enableFollowButton();
+        }
+    }
+
+    private static class UnfollowHandler extends Handler {
+
+        private final MainObserver observer;
+
+        public UnfollowHandler(MainObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(UnfollowTask.SUCCESS_KEY);
+            if (success) {
+                observer.unfollowSuccess();
+            } else if (msg.getData().containsKey(UnfollowTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(UnfollowTask.MESSAGE_KEY);
+                observer.fail("Failed to unfollow: " + message);
+            } else if (msg.getData().containsKey(UnfollowTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(UnfollowTask.EXCEPTION_KEY);
+                observer.fail("Failed to unfollow because of exception: " + ex.getMessage());
+            }
+
+            observer.enableFollowButton();
+        }
+    }
+
+
+
+    // SERVICE FUNCTIONS
+
     public void loadMore_Following(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, FollowingObserver followingObserver) {
-        GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken,
-                user, pageSize, lastFollowee, new GetFollowingHandler(followingObserver));
+        GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken, user, pageSize, lastFollowee, new GetFollowingHandler(followingObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowingTask);
     }
 
     public void loadMore_Followers(AuthToken currUserAuthToken, User user, int pageSize, User lastFollower, FollowersObserver followersObserver) {
-        GetFollowersTask getFollowersTask = new GetFollowersTask(currUserAuthToken,
-                user, pageSize, lastFollower, new GetFollowersHandler(followersObserver));
+        GetFollowersTask getFollowersTask = new GetFollowersTask(currUserAuthToken, user, pageSize, lastFollower, new GetFollowersHandler(followersObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowersTask);
     }
 
     public void getUser_Following(AuthToken currUserAuthToken, String username, FollowingObserver observer) {
-        GetUserTask getUserTask = new GetUserTask(currUserAuthToken,
-                username, new GetUserHandler(observer));
+        GetUserTask getUserTask = new GetUserTask(currUserAuthToken, username, new GetUserHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getUserTask);
     }
 
     public void getUser_Followers(AuthToken currUserAuthToken, String username, FollowersObserver observer) {
-        GetUserTask getUserTask = new GetUserTask(currUserAuthToken,
-                username, new GetUserHandler(observer));
+        GetUserTask getUserTask = new GetUserTask(currUserAuthToken, username, new GetUserHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getUserTask);
+    }
+
+    public void follow(AuthToken authToken, User selectedUser, MainObserver observer) {
+        FollowTask followTask = new FollowTask(authToken, selectedUser, new FollowHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(followTask);
+    }
+
+    public void unfollow(AuthToken authToken, User selectedUser, MainObserver observer) {
+        UnfollowTask unfollowTask = new UnfollowTask(authToken, selectedUser, new UnfollowHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(unfollowTask);
+    }
+
+    public void isFollower(AuthToken authToken, User currUser, User selectedUser, MainObserver observer) {
+        IsFollowerTask isFollowerTask = new IsFollowerTask(authToken, currUser, selectedUser, new IsFollowerHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(isFollowerTask);
+    }
+
+    public void getFollowersCount(AuthToken authToken, User user, MainObserver observer) {
+        GetFollowersCountTask followersCountTask = new GetFollowersCountTask(authToken, user, new GetFollowersCountHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(followersCountTask);
+    }
+
+    public void getFollowingCount(AuthToken authToken, User user, MainObserver observer) {
+        GetFollowingCountTask followingCountTask = new GetFollowingCountTask(authToken, user, new GetFollowingCountHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(followingCountTask);
     }
 
 }
