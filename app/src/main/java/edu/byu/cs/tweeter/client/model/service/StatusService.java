@@ -92,40 +92,6 @@ public class StatusService {
         }
     }
 
-    private static class GetUserHandler extends Handler {
-
-        private FeedObserver feedObserver;
-        private StoryObserver storyObserver;
-        private final int type; // 1 (Feed) or 2 (Story), avoids duplication of this class
-
-        public GetUserHandler(FeedObserver observer) {
-            feedObserver = observer;
-            type = 1;
-        }
-        public GetUserHandler(StoryObserver observer) {
-            storyObserver = observer;
-            type = 2;
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
-            if (success) {
-                User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
-                if (type == 1) feedObserver.displayUser(user);
-                else storyObserver.displayUser(user);
-            } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
-                String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
-                if (type == 1) feedObserver.fail("Failed to get user's profile: " + message, true);
-                else storyObserver.fail("Failed to get user's profile: " + message, true);
-            } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
-                Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
-                if (type == 1) feedObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
-                else storyObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
-            }
-        }
-    }
-
     private static class PostStatusHandler extends Handler {
 
         private final MainObserver observer;
@@ -163,18 +129,6 @@ public class StatusService {
         GetStoryTask getStoryTask = new GetStoryTask(authToken, user, pageSize, lastStatus, new GetStoryHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getStoryTask);
-    }
-
-    public void getUser_Feed(AuthToken authToken, String clickable, FeedObserver observer) {
-        GetUserTask getUserTask = new GetUserTask(authToken, clickable, new GetUserHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(getUserTask);
-    }
-
-    public void getUser_Story(AuthToken authToken, String clickable, StoryObserver observer) {
-        GetUserTask getUserTask = new GetUserTask(authToken, clickable, new GetUserHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(getUserTask);
     }
 
     public void postStatus(AuthToken authToken, Status newStatus, MainObserver observer) {

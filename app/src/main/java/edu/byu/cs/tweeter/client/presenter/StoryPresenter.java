@@ -4,12 +4,14 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.StatusService;
+import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class StoryPresenter {
 
-    private final StatusService service;
+    private final StatusService sService;
+    private final UserService uService;
     private final View view;
 
     private Status lastStatus;
@@ -19,7 +21,8 @@ public class StoryPresenter {
 
     public StoryPresenter(View view) {
         this.view = view;
-        service = new StatusService();
+        sService = new StatusService();
+        uService = new UserService();
     }
 
     public interface View {
@@ -56,13 +59,13 @@ public class StoryPresenter {
     }
 
     public void goToUser(String clickable) {
-        service.getUser_Story(Cache.getInstance().getCurrUserAuthToken(), clickable, new StoryObserver());
+        uService.getUser_Story(Cache.getInstance().getCurrUserAuthToken(), clickable, new StoryObserver());
     }
 
     public void loadMoreItems(User user) {
         isLoading = true;
         view.setLoadingFooter(true);
-        service.loadMore_Story(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus, new StoryObserver());
+        sService.loadMore_Story(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus, new StoryObserver());
     }
 
     public boolean isLoading() {

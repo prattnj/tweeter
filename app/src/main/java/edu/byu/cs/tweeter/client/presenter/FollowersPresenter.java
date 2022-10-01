@@ -4,11 +4,13 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
+import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowersPresenter {
 
-    private final FollowService service;
+    private final FollowService fService;
+    private final UserService uService;
     private final View view;
 
     private User lastFollower;
@@ -18,7 +20,8 @@ public class FollowersPresenter {
 
     public FollowersPresenter(View view) {
         this.view = view;
-        service = new FollowService();
+        fService = new FollowService();
+        uService = new UserService();
     }
 
     public interface View {
@@ -55,13 +58,13 @@ public class FollowersPresenter {
     }
 
     public void goToUser(String username) {
-        service.getUser_Followers(Cache.getInstance().getCurrUserAuthToken(), username, new FollowersObserver());
+        uService.getUser_Followers(Cache.getInstance().getCurrUserAuthToken(), username, new FollowersObserver());
     }
 
     public void loadMoreItems(User user) {
         isLoading = true;
         view.setLoadingFooter(true);
-        service.loadMore_Followers(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollower, new FollowersObserver());
+        fService.loadMore_Followers(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollower, new FollowersObserver());
     }
 
     public boolean isLoading() {

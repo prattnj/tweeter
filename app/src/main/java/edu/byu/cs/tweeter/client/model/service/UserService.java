@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.client.backgroundTask.LoginTask;
 import edu.byu.cs.tweeter.client.backgroundTask.LogoutTask;
 import edu.byu.cs.tweeter.client.backgroundTask.RegisterTask;
@@ -115,6 +116,74 @@ public class UserService {
         }
     }
 
+    private static class GetUserFollowHandler extends Handler {
+
+        private FollowService.FollowingObserver followingObserver;
+        private FollowService.FollowersObserver followersObserver;
+        private final int type; // 1 (Following) or 2 (Followers), avoids duplication of this class
+
+        public GetUserFollowHandler(FollowService.FollowingObserver observer) {
+            followingObserver = observer;
+            type = 1;
+        }
+        public GetUserFollowHandler(FollowService.FollowersObserver observer) {
+            followersObserver = observer;
+            type = 2;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
+            if (success) {
+                User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
+                if (type == 1) followingObserver.displayUser(user);
+                else followersObserver.displayUser(user);
+            } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
+                if (type == 1) followingObserver.fail("Failed to get user's profile: " + message, true);
+                else followersObserver.fail("Failed to get user's profile: " + message, true);
+            } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
+                if (type == 1) followingObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
+                else followersObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
+            }
+        }
+    }
+
+    private static class GetUserStatusHandler extends Handler {
+
+        private StatusService.FeedObserver feedObserver;
+        private StatusService.StoryObserver storyObserver;
+        private final int type; // 1 (Feed) or 2 (Story), avoids duplication of this class
+
+        public GetUserStatusHandler(StatusService.FeedObserver observer) {
+            feedObserver = observer;
+            type = 1;
+        }
+        public GetUserStatusHandler(StatusService.StoryObserver observer) {
+            storyObserver = observer;
+            type = 2;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
+            if (success) {
+                User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
+                if (type == 1) feedObserver.displayUser(user);
+                else storyObserver.displayUser(user);
+            } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
+                if (type == 1) feedObserver.fail("Failed to get user's profile: " + message, true);
+                else storyObserver.fail("Failed to get user's profile: " + message, true);
+            } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
+                if (type == 1) feedObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
+                else storyObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
+            }
+        }
+    }
+
 
 
     // SERVICE FUNCTIONS
@@ -135,6 +204,30 @@ public class UserService {
         LogoutTask logoutTask = new LogoutTask(Cache.getInstance().getCurrUserAuthToken(), new LogoutHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(logoutTask);
+    }
+
+    public void getUser_Following(AuthToken currUserAuthToken, String username, FollowService.FollowingObserver observer) {
+        GetUserTask getUserTask = new GetUserTask(currUserAuthToken, username, new GetUserFollowHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getUserTask);
+    }
+
+    public void getUser_Followers(AuthToken currUserAuthToken, String username, FollowService.FollowersObserver observer) {
+        GetUserTask getUserTask = new GetUserTask(currUserAuthToken, username, new GetUserFollowHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getUserTask);
+    }
+
+    public void getUser_Feed(AuthToken authToken, String clickable, StatusService.FeedObserver observer) {
+        GetUserTask getUserTask = new GetUserTask(authToken, clickable, new GetUserStatusHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getUserTask);
+    }
+
+    public void getUser_Story(AuthToken authToken, String clickable, StatusService.StoryObserver observer) {
+        GetUserTask getUserTask = new GetUserTask(authToken, clickable, new GetUserStatusHandler(observer));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getUserTask);
     }
 
 }

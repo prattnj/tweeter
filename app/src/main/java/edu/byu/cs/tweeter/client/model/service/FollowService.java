@@ -100,40 +100,6 @@ public class FollowService {
         }
     }
 
-    private static class GetUserHandler extends Handler {
-
-        private FollowingObserver followingObserver;
-        private FollowersObserver followersObserver;
-        private final int type; // 1 (Following) or 2 (Followers), avoids duplication of this class
-
-        public GetUserHandler(FollowingObserver observer) {
-            followingObserver = observer;
-            type = 1;
-        }
-        public GetUserHandler(FollowersObserver observer) {
-            followersObserver = observer;
-            type = 2;
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            boolean success = msg.getData().getBoolean(GetUserTask.SUCCESS_KEY);
-            if (success) {
-                User user = (User) msg.getData().getSerializable(GetUserTask.USER_KEY);
-                if (type == 1) followingObserver.displayUser(user);
-                else followersObserver.displayUser(user);
-            } else if (msg.getData().containsKey(GetUserTask.MESSAGE_KEY)) {
-                String message = msg.getData().getString(GetUserTask.MESSAGE_KEY);
-                if (type == 1) followingObserver.fail("Failed to get user's profile: " + message, true);
-                else followersObserver.fail("Failed to get user's profile: " + message, true);
-            } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
-                Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
-                if (type == 1) followingObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
-                else followersObserver.fail("Failed to get user's profile because of exception: " + ex.getMessage(), true);
-            }
-        }
-    }
-
     private static class GetFollowersCountHandler extends Handler {
 
         private final MainObserver observer;
@@ -271,18 +237,6 @@ public class FollowService {
         GetFollowersTask getFollowersTask = new GetFollowersTask(currUserAuthToken, user, pageSize, lastFollower, new GetFollowersHandler(followersObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowersTask);
-    }
-
-    public void getUser_Following(AuthToken currUserAuthToken, String username, FollowingObserver observer) {
-        GetUserTask getUserTask = new GetUserTask(currUserAuthToken, username, new GetUserHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(getUserTask);
-    }
-
-    public void getUser_Followers(AuthToken currUserAuthToken, String username, FollowersObserver observer) {
-        GetUserTask getUserTask = new GetUserTask(currUserAuthToken, username, new GetUserHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(getUserTask);
     }
 
     public void follow(AuthToken authToken, User selectedUser, MainObserver observer) {
