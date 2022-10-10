@@ -10,10 +10,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.view.main.feed.FeedFragment;
-import edu.byu.cs.tweeter.client.view.main.followers.FollowersFragment;
-import edu.byu.cs.tweeter.client.view.main.following.FollowingFragment;
-import edu.byu.cs.tweeter.client.view.main.story.StoryFragment;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**

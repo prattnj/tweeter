@@ -1,11 +1,10 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.client.observer_interface.UserObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class LoginPresenter {
+public class LoginPresenter extends Presenter {
 
     private final UserService service;
     private final View view;
@@ -15,7 +14,7 @@ public class LoginPresenter {
         this.service = new UserService();
     }
 
-    public interface View {
+    public interface View extends Presenter.View {
         void displayInfoMessage(String message);
         void clearInfoMessage();
         void displayErrorMessage(String message);
@@ -23,27 +22,31 @@ public class LoginPresenter {
         void navigateToMain(User user);
     }
 
-    public class LoginObserver implements UserService.LoginObserver {
+    public class LoginObserver extends UserObserver {
 
         @Override
-        public void loginSuccess(User user) {
+        public void handleSuccess(User user) {
             view.displayInfoMessage("Hello " + user.getFirstName());
             view.clearErrorMessage();
             view.navigateToMain(user);
         }
 
         @Override
-        public void loginFail(String message) {
+        public void handleFailure(String message) {
             view.clearInfoMessage();
             view.displayErrorMessage(message);
         }
 
         @Override
-        public void cacheSession(User loggedInUser, AuthToken authToken) {
-            Cache.getInstance().setCurrUser(loggedInUser);
-            Cache.getInstance().setCurrUserAuthToken(authToken);
+        public void handleException(Exception exception) {
+            view.displayErrorMessage("Exception encountered.");
+            exception.printStackTrace();
         }
     }
+
+
+
+    // EXTRA PRESENTER FUNCTIONS
 
     public void initiateLogin(String username, String password) {
         String message = validateLogin(username, password);

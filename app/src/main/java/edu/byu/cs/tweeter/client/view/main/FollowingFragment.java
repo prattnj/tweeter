@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.view.main.following;
+package edu.byu.cs.tweeter.client.view.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,13 +25,13 @@ import java.util.List;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.presenter.FollowingPresenter;
-import edu.byu.cs.tweeter.client.view.main.MainActivity;
+import edu.byu.cs.tweeter.client.presenter.PagedPresenter;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
  * Implements the "Following" tab.
  */
-public class FollowingFragment extends Fragment implements FollowingPresenter.View {
+public class FollowingFragment extends Fragment implements PagedPresenter.PagedView<User> {
 
     private static final String USER_KEY = "UserKey";
     private static final int LOADING_DATA_VIEW = 0;
@@ -81,26 +81,26 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
     }
 
     @Override
-    public void displayMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void setLoadingFooter(boolean add) {
-        if (add) followingRecyclerViewAdapter.addLoadingFooter();
+    public void setLoading(boolean isLoading) {
+        if (isLoading) followingRecyclerViewAdapter.addLoadingFooter();
         else followingRecyclerViewAdapter.removeLoadingFooter();
     }
 
     @Override
-    public void addFollowees(List<User> followees) {
-        followingRecyclerViewAdapter.addItems(followees);
+    public void addItems(List<User> items) {
+        followingRecyclerViewAdapter.addItems(items);
     }
 
     @Override
-    public void displayUser(User user) {
+    public void navigateToUser(User user) {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
         startActivity(intent);
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -125,7 +125,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             userName = itemView.findViewById(R.id.userName);
 
             itemView.setOnClickListener(view -> {
-                presenter.goToUser(userAlias.getText().toString());
+                presenter.getUser(userAlias.getText().toString());
                 Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
             });
         }
@@ -250,7 +250,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
          * data.
          */
         void loadMoreItems() {
-            if (!presenter.isLoading()) presenter.loadMoreItems(user);
+            if (!presenter.isLoading()) presenter.loadMoreItems(/*user*/);
         }
 
         /**

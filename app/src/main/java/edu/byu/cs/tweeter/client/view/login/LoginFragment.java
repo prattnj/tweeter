@@ -87,4 +87,9 @@ public class LoginFragment extends Fragment implements LoginPresenter.View {
         intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
         startActivity(intent);
     }
+
+    @Override
+    public void displayMessage(String message) {
+        displayInfoMessage(message);
+    }
 }

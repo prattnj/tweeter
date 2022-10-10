@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.view.main.feed;
+package edu.byu.cs.tweeter.client.view.main;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -31,32 +31,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.client.R;
-import edu.byu.cs.tweeter.client.presenter.FeedPresenter;
-import edu.byu.cs.tweeter.client.view.main.MainActivity;
+import edu.byu.cs.tweeter.client.presenter.PagedPresenter;
+import edu.byu.cs.tweeter.client.presenter.StoryPresenter;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
- * Implements the "Feed" tab.
+ * Implements the "Story" tab.
  */
-public class FeedFragment extends Fragment implements FeedPresenter.View {
+public class StoryFragment extends Fragment implements PagedPresenter.PagedView<Status> {
 
     private static final String USER_KEY = "UserKey";
     private static final int LOADING_DATA_VIEW = 0;
     private static final int ITEM_VIEW = 1;
     private User user;
-    private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
-    private final FeedPresenter presenter = new FeedPresenter(this);
+    private StoryRecyclerViewAdapter storyRecyclerViewAdapter;
+    private final StoryPresenter presenter = new StoryPresenter(this);
 
     /**
      * Creates an instance of the fragment and places the target user in an arguments
      * bundle assigned to the fragment.
      *
-     * @param user the user whose feed is being displayed (not necessarily the logged-in user).
+     * @param user the user whose story is being displayed (not necessarily the logged-in user).
      * @return the fragment.
      */
-    public static FeedFragment newInstance(User user) {
-        FeedFragment fragment = new FeedFragment();
+    public static StoryFragment newInstance(User user) {
+        StoryFragment fragment = new StoryFragment();
 
         Bundle args = new Bundle(1);
         args.putSerializable(USER_KEY, user);
@@ -68,24 +68,42 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_feed, container, false);
+        View view = inflater.inflate(R.layout.fragment_story, container, false);
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
 
-        RecyclerView feedRecyclerView = view.findViewById(R.id.feedRecyclerView);
+        RecyclerView storyRecyclerView = view.findViewById(R.id.storyRecyclerView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        feedRecyclerView.setLayoutManager(layoutManager);
+        storyRecyclerView.setLayoutManager(layoutManager);
 
-        feedRecyclerViewAdapter = new FeedRecyclerViewAdapter();
-        feedRecyclerView.setAdapter(feedRecyclerViewAdapter);
+        storyRecyclerViewAdapter = new StoryRecyclerViewAdapter();
+        storyRecyclerView.setAdapter(storyRecyclerViewAdapter);
 
-        feedRecyclerView.addOnScrollListener(new FeedRecyclerViewPaginationScrollListener(layoutManager));
+        storyRecyclerView.addOnScrollListener(new StoryRecyclerViewPaginationScrollListener(layoutManager));
 
-        feedRecyclerViewAdapter.loadMoreItems();
+        storyRecyclerViewAdapter.loadMoreItems();
 
         return view;
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (isLoading) storyRecyclerViewAdapter.addLoadingFooter();
+        else storyRecyclerViewAdapter.removeLoadingFooter();
+    }
+
+    @Override
+    public void addItems(List<Status> items) {
+        storyRecyclerViewAdapter.addItems(items);
+    }
+
+    @Override
+    public void navigateToUser(User user) {
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
+        startActivity(intent);
     }
 
     @Override
@@ -93,28 +111,10 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void setLoadingFooter(boolean add) {
-        if (add) feedRecyclerViewAdapter.addLoadingFooter();
-        else feedRecyclerViewAdapter.removeLoadingFooter();
-    }
-
-    @Override
-    public void addStatuses(List<Status> statuses) {
-        feedRecyclerViewAdapter.addItems(statuses);
-    }
-
-    @Override
-    public void displayUser(User user) {
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
-        startActivity(intent);
-    }
-
     /**
-     * The ViewHolder for the RecyclerView that displays the feed data.
+     * The ViewHolder for the RecyclerView that displays the story data.
      */
-    private class FeedHolder extends RecyclerView.ViewHolder {
+    private class StoryHolder extends RecyclerView.ViewHolder {
 
         private final ImageView userImage;
         private final TextView userAlias;
@@ -127,7 +127,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          *
          * @param itemView the view on which the status will be displayed.
          */
-        FeedHolder(@NonNull View itemView) {
+        StoryHolder(@NonNull View itemView) {
             super(itemView);
 
             userImage = itemView.findViewById(R.id.statusImage);
@@ -135,9 +135,9 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             userName = itemView.findViewById(R.id.statusName);
             post = itemView.findViewById(R.id.statusPost);
             datetime = itemView.findViewById(R.id.statusDatetime);
-
+            
             itemView.setOnClickListener(view -> {
-                presenter.goToUser(userAlias.getText().toString());
+                presenter.getUser(userAlias.getText().toString());
                 Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
             });
         }
@@ -156,9 +156,9 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             // @mentions and urls clickable
             SpannableString spannableString = new SpannableString(status.getPost());
 
+
             for (String mention : status.getMentions()) {
-                int startIndex = status.getPost().indexOf(mention);
-                spannableString.setSpan(new ClickableSpan() {
+                ClickableSpan span = new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View widget) {
                         TextView clickedMention = (TextView) widget;
@@ -168,11 +168,12 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
 
                         String clickable = s.subSequence(start, end).toString();
 
+
                         if (clickable.contains("http")) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(clickable));
                             startActivity(intent);
                         } else {
-                            presenter.goToUser(clickable);
+                            presenter.getUser(clickable);
                             Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -183,7 +184,10 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
                         ds.setColor(getResources().getColor(R.color.colorAccent));
                         ds.setUnderlineText(false);
                     }
-                }, startIndex, (startIndex + mention.length()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                };
+
+                int startIndex = status.getPost().indexOf(mention);
+                spannableString.setSpan(span, startIndex, (startIndex + mention.length()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
             for (String url : status.getUrls()) {
@@ -198,21 +202,21 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
     }
 
     /**
-     * The adapter for the RecyclerView that displays the feed data.
+     * The adapter for the RecyclerView that displays the story data.
      */
-    private class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedHolder> {
+    private class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryHolder> {
 
-        private final List<Status> feed = new ArrayList<>();
+        private final List<Status> story = new ArrayList<>();
 
         /**
          * Adds new statuses to the list from which the RecyclerView retrieves the statuses it displays
          * and notifies the RecyclerView that items have been added.
          *
-         * @param newStory the status to add.
+         * @param newStory the statuses to add.
          */
         void addItems(List<Status> newStory) {
-            int startInsertPosition = feed.size();
-            feed.addAll(newStory);
+            int startInsertPosition = story.size();
+            story.addAll(newStory);
             this.notifyItemRangeInserted(startInsertPosition, newStory.size());
         }
 
@@ -223,8 +227,8 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * @param status the status to add.
          */
         void addItem(Status status) {
-            feed.add(status);
-            this.notifyItemInserted(feed.size() - 1);
+            story.add(status);
+            this.notifyItemInserted(story.size() - 1);
         }
 
         /**
@@ -234,8 +238,8 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * @param status the status to remove.
          */
         void removeItem(Status status) {
-            int position = feed.indexOf(status);
-            feed.remove(position);
+            int position = story.indexOf(status);
+            story.remove(position);
             this.notifyItemRemoved(position);
         }
 
@@ -249,27 +253,33 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          */
         @NonNull
         @Override
-        public FeedHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(FeedFragment.this.getContext());
+        public StoryHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(StoryFragment.this.getContext());
             View view;
 
-            if (viewType == LOADING_DATA_VIEW) view = layoutInflater.inflate(R.layout.loading_row, parent, false);
-            else view = layoutInflater.inflate(R.layout.status_row, parent, false);
+            if (viewType == LOADING_DATA_VIEW) {
+                view = layoutInflater.inflate(R.layout.loading_row, parent, false);
 
-            return new FeedHolder(view);
+            } else {
+                view = layoutInflater.inflate(R.layout.status_row, parent, false);
+            }
+
+            return new StoryHolder(view);
         }
 
         /**
          * Binds the status at the specified position unless we are currently loading new data. If
          * we are loading new data, the display at that position will be the data loading footer.
          *
-         * @param feedHolder the ViewHolder to which the status should be bound.
-         * @param position   the position (in the list of statuses) that contains the status to be
-         *                   bound.
+         * @param storyHolder the ViewHolder to which the status should be bound.
+         * @param position    the position (in the list of statuses) that contains the status to be
+         *                    bound.
          */
         @Override
-        public void onBindViewHolder(@NonNull FeedHolder feedHolder, int position) {
-            if (!presenter.isLoading()) feedHolder.bindStatus(feed.get(position));
+        public void onBindViewHolder(@NonNull StoryHolder storyHolder, int position) {
+            if (!presenter.isLoading()) {
+                storyHolder.bindStatus(story.get(position));
+            }
         }
 
         /**
@@ -279,7 +289,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          */
         @Override
         public int getItemCount() {
-            return feed.size();
+            return story.size();
         }
 
         /**
@@ -291,15 +301,15 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          */
         @Override
         public int getItemViewType(int position) {
-            return (position == feed.size() - 1 && presenter.isLoading()) ? LOADING_DATA_VIEW : ITEM_VIEW;
+            return (position == story.size() - 1 && presenter.isLoading()) ? LOADING_DATA_VIEW : ITEM_VIEW;
         }
 
         /**
-         * Causes the Adapter to display a loading footer and make a request to get more feed
+         * Causes the Adapter to display a loading footer and make a request to get more story
          * data.
          */
-        void loadMoreItems(){
-            if (!presenter.isLoading()) presenter.loadMoreItems(user);
+        void loadMoreItems() {
+            if (!presenter.isLoading()) presenter.loadMoreItems(/*user*/);
         }
 
         /**
@@ -319,7 +329,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * the loading footer at the bottom of the list.
          */
         private void removeLoadingFooter() {
-            removeItem(feed.get(feed.size() - 1));
+            removeItem(story.get(story.size() - 1));
         }
 
     }
@@ -328,7 +338,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
      * A scroll listener that detects when the user has scrolled to the bottom of the currently
      * available data.
      */
-    private class FeedRecyclerViewPaginationScrollListener extends RecyclerView.OnScrollListener {
+    private class StoryRecyclerViewPaginationScrollListener extends RecyclerView.OnScrollListener {
 
         private final LinearLayoutManager layoutManager;
 
@@ -337,7 +347,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          *
          * @param layoutManager the layout manager being used by the RecyclerView.
          */
-        FeedRecyclerViewPaginationScrollListener(LinearLayoutManager layoutManager) {
+        StoryRecyclerViewPaginationScrollListener(LinearLayoutManager layoutManager) {
             this.layoutManager = layoutManager;
         }
 
@@ -363,7 +373,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
                         totalItemCount && firstVisibleItemPosition >= 0) {
                     // Run this code later on the UI thread
                     final Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(() -> feedRecyclerViewAdapter.loadMoreItems(), 0);
+                    handler.postDelayed(() -> storyRecyclerViewAdapter.loadMoreItems(), 0);
                 }
             }
         }

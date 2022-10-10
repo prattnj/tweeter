@@ -9,10 +9,10 @@ import java.util.Base64;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.client.observer_interface.UserObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class RegisterPresenter {
+public class RegisterPresenter extends Presenter {
 
     private final UserService service;
     private final View view;
@@ -22,30 +22,33 @@ public class RegisterPresenter {
         this.service = new UserService();
     }
 
-    public interface View {
-        void displayInfoMessage(String message);
+    public interface View extends Presenter.View {
         void navigateToMain(User user);
     }
 
-    public class RegisterObserver implements UserService.RegisterObserver {
+    public class RegisterObserver extends UserObserver {
 
         @Override
-        public void cacheSession(User registeredUser, AuthToken authToken) {
-            Cache.getInstance().setCurrUser(registeredUser);
-            Cache.getInstance().setCurrUserAuthToken(authToken);
+        public void handleSuccess(User user) {
+            view.displayMessage("Hello " + Cache.getInstance().getCurrUser().getName());
+            view.navigateToMain(user);
         }
 
         @Override
-        public void registerSuccess(User registeredUser) {
-            view.displayInfoMessage("Hello " + Cache.getInstance().getCurrUser().getName());
-            view.navigateToMain(registeredUser);
+        public void handleFailure(String message) {
+            view.displayMessage(message);
         }
 
         @Override
-        public void registerFail(String message) {
-            view.displayInfoMessage(message);
+        public void handleException(Exception exception) {
+            view.displayMessage("Exception encountered.");
+            exception.printStackTrace();
         }
     }
+
+
+
+    // EXTRA PRESENTER FUNCTIONS
 
     public void initiateRegister(String firstName, String lastName, String alias, String password, Drawable original) {
         validateRegistration(firstName, lastName, alias, password, original);

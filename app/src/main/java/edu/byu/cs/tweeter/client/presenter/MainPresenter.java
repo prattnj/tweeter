@@ -11,10 +11,12 @@ import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.observer_interface.MainObserver;
+import edu.byu.cs.tweeter.client.observer_interface.UserObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class MainPresenter {
+public class MainPresenter extends Presenter {
 
     private final UserService uService;
     private final FollowService fService;
@@ -28,11 +30,9 @@ public class MainPresenter {
         sService = new StatusService();
     }
 
-    public interface View {
-        void displayMessage(String message);
+    public interface View extends Presenter.View {
         void logOutUpdateView();
-        void setFollowerCount(int count);
-        void setFolloweeCount(int count);
+        void setCounts(int count1, int count2);
         void setFollowButton(boolean isFollower);
         void setEnableFollowButton(boolean b);
         void cancelPostToast();
@@ -40,21 +40,30 @@ public class MainPresenter {
         void updateView_Unfollow();
     }
 
-    public class MainObserver implements UserService.MainObserver, FollowService.MainObserver, StatusService.MainObserver {
+    public class LogoutObserver extends UserObserver {
 
         @Override
-        public void logoutSuccess() {
+        public void handleFailure(String message) {
+            view.displayMessage(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage("Exception encountered.");
+            exception.printStackTrace();
+        }
+
+        @Override
+        public void handleSuccess(User user) {
             view.logOutUpdateView();
         }
+    }
+
+    public class MainObserverConcrete extends MainObserver {
 
         @Override
-        public void getFollowersCountSuccess(int count) {
-            view.setFollowerCount(count);
-        }
-
-        @Override
-        public void getFollowingCountSuccess(int count) {
-            view.setFolloweeCount(count);
+        public void getCountsSuccess(int count1, int count2) {
+            view.setCounts(count1, count2);
         }
 
         @Override
@@ -79,42 +88,54 @@ public class MainPresenter {
         }
 
         @Override
-        public void fail(String message) {
+        public void enableFollowButton() {
+            view.setEnableFollowButton(true);
+        }
+
+        @Override
+        public void handleFailure(String message) {
             view.displayMessage(message);
         }
 
         @Override
-        public void enableFollowButton() {
-            view.setEnableFollowButton(true);
+        public void handleException(Exception exception) {
+            view.displayMessage("Exception encountered.");
+            exception.printStackTrace();
         }
     }
 
+
+
+    // EXTRA PRESENTER FUNCTIONS
+
     public void logout() {
-        uService.logout(new MainObserver());
+        uService.logout(new LogoutObserver());
     }
 
     public void follow(User user) {
-        fService.follow(Cache.getInstance().getCurrUserAuthToken(), user, new MainObserver());
+        fService.follow(Cache.getInstance().getCurrUserAuthToken(), user, new MainObserverConcrete());
     }
 
     public void unfollow(User user) {
-        fService.unfollow(Cache.getInstance().getCurrUserAuthToken(), user, new MainObserver());
+        fService.unfollow(Cache.getInstance().getCurrUserAuthToken(), user, new MainObserverConcrete());
     }
 
     public void isFollower(User user) {
-        fService.isFollower(Cache.getInstance().getCurrUserAuthToken(), Cache.getInstance().getCurrUser(), user, new MainObserver());
+        fService.isFollower(Cache.getInstance().getCurrUserAuthToken(), Cache.getInstance().getCurrUser(), user, new MainObserverConcrete());
     }
 
     public void updateSelectedUserFollowingAndFollowers(User selectedUser) {
-        fService.getFollowersCount(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new MainObserver());
-        fService.getFollowingCount(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new MainObserver());
-        //ExecutorService executor = Executors.newFixedThreadPool(2);
+        fService.getCounts(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new MainObserverConcrete());
     }
 
     public void postStatus(String post) throws ParseException {
         Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), getFormattedDateTime(), parseURLs(post), parseMentions(post));
-        sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new MainObserver());
+        sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new MainObserverConcrete());
     }
+
+
+
+    // DO NOT TOUCH
 
     public String getFormattedDateTime() throws ParseException {
         SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -178,6 +199,5 @@ public class MainPresenter {
             return word.length();
         }
     }
-
 
 }

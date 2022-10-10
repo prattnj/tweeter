@@ -94,12 +94,6 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     }
 
     @Override
-    public void displayInfoMessage(String message) {
-        registeringToast.cancel();
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
     public void navigateToMain(User user) {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
@@ -108,5 +102,11 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        registeringToast.cancel();
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 }
