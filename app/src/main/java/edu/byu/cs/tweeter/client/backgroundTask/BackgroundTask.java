@@ -15,7 +15,6 @@ public abstract class BackgroundTask implements Runnable {
     public static final String SUCCESS_KEY = "success";
     public static final String MESSAGE_KEY = "message";
     public static final String EXCEPTION_KEY = "exception";
-    //public static final String STATUSES_KEY = "items";
 
     /**
      * Message handler that will receive task results.

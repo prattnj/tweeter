@@ -22,7 +22,7 @@ public abstract class BaseHandler extends Handler {
             handleSuccess(msg);
         } else if (msg.getData().containsKey(BackgroundTask.MESSAGE_KEY)) {
             String message = msg.getData().getString(BackgroundTask.MESSAGE_KEY);
-            observer.handleFailure("Failed to accomplish task: " + message); // todo
+            observer.handleFailure("Running task returned message: " + message + " "); // default message, is often overridden
         } else if (msg.getData().containsKey(BackgroundTask.EXCEPTION_KEY)) {
             Exception ex = (Exception) msg.getData().getSerializable(BackgroundTask.EXCEPTION_KEY);
             observer.handleException(ex);

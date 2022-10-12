@@ -1,18 +1,19 @@
-package edu.byu.cs.tweeter.client.model.service;
+package edu.byu.cs.tweeter.client.service;
 
 import edu.byu.cs.tweeter.client.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.backgroundTask.FollowTask;
-import edu.byu.cs.tweeter.client.backgroundTask.GetCountsTask;
+import edu.byu.cs.tweeter.client.backgroundTask.GetCountTask;
+import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersTask;
+import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.backgroundTask.IsFollowerTask;
 import edu.byu.cs.tweeter.client.backgroundTask.UnfollowTask;
-import edu.byu.cs.tweeter.client.handler.FollowHandler;
-import edu.byu.cs.tweeter.client.handler.GetCountsHandler;
+import edu.byu.cs.tweeter.client.handler.GetCountHandler;
 import edu.byu.cs.tweeter.client.handler.GetItemsHandler;
 import edu.byu.cs.tweeter.client.handler.IsFollowerHandler;
-import edu.byu.cs.tweeter.client.handler.UnfollowHandler;
-import edu.byu.cs.tweeter.client.observer_interface.MainObserver;
+import edu.byu.cs.tweeter.client.handler.SimpleSuccessHandler;
+import edu.byu.cs.tweeter.client.presenter.MainPresenter;
 import edu.byu.cs.tweeter.client.presenter.PagedPresenter;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -29,23 +30,28 @@ public class FollowService {
         BackgroundTaskUtils.runTask(getFollowersTask);
     }
 
-    public void follow(AuthToken authToken, User selectedUser, MainObserver observer) {
-        FollowTask followTask = new FollowTask(authToken, selectedUser, new FollowHandler(observer));
+    public void follow(AuthToken authToken, User selectedUser, MainPresenter.FollowObserver observer) {
+        FollowTask followTask = new FollowTask(authToken, selectedUser, new SimpleSuccessHandler(observer));
         BackgroundTaskUtils.runTask(followTask);
     }
 
-    public void unfollow(AuthToken authToken, User selectedUser, MainObserver observer) {
-        UnfollowTask unfollowTask = new UnfollowTask(authToken, selectedUser, new UnfollowHandler(observer));
+    public void unfollow(AuthToken authToken, User selectedUser, MainPresenter.UnfollowObserver observer) {
+        UnfollowTask unfollowTask = new UnfollowTask(authToken, selectedUser, new SimpleSuccessHandler(observer));
         BackgroundTaskUtils.runTask(unfollowTask);
     }
 
-    public void isFollower(AuthToken authToken, User currUser, User selectedUser, MainObserver observer) {
+    public void isFollower(AuthToken authToken, User currUser, User selectedUser, MainPresenter.IsFollowerObserver observer) {
         IsFollowerTask isFollowerTask = new IsFollowerTask(authToken, currUser, selectedUser, new IsFollowerHandler(observer));
         BackgroundTaskUtils.runTask(isFollowerTask);
     }
 
-    public void getCounts(AuthToken authToken, User user, MainObserver observer) {
-        GetCountsTask countTask = new GetCountsTask(authToken, user, new GetCountsHandler(observer));
+    public void getFollowerCount(AuthToken authToken, User user, MainPresenter.GetFollowerCountObserver observer) {
+        GetCountTask countTask = new GetFollowersCountTask(authToken, user, new GetCountHandler(observer));
+        BackgroundTaskUtils.runTask(countTask);
+    }
+
+    public void getFollowingCount(AuthToken authToken, User user, MainPresenter.GetFollowingCountObserver observer) {
+        GetCountTask countTask = new GetFollowingCountTask(authToken, user, new GetCountHandler(observer));
         BackgroundTaskUtils.runTask(countTask);
     }
 

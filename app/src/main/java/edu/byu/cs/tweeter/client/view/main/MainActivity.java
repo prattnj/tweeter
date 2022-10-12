@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     public static final String CURRENT_USER_KEY = "CurrentUser";
     private Toast logOutToast;
     private Toast postingToast;
+    private Toast followToast;
     private User selectedUser;
     private TextView followeeCount;
     private TextView followerCount;
@@ -65,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
             statusDialogFragment.show(getSupportFragmentManager(), "post-status-dialog");
         });
 
-        presenter.updateSelectedUserFollowingAndFollowers(selectedUser);
+        presenter.updateFollowerCount(selectedUser);
+        presenter.updateFollowingCount(selectedUser);
 
         TextView userName = findViewById(R.id.userName);
         userName.setText(selectedUser.getName());
@@ -96,10 +98,14 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
             if (followButton.getText().toString().equals(v.getContext().getString(R.string.following))) {
                 presenter.unfollow(selectedUser);
-                Toast.makeText(MainActivity.this, "Removing " + selectedUser.getName() + "...", Toast.LENGTH_LONG).show();
+                if (followToast != null) followToast.cancel();
+                followToast = Toast.makeText(MainActivity.this, "Removing " + selectedUser.getName() + "...", Toast.LENGTH_LONG);
+                followToast.show();
             } else {
                 presenter.follow(selectedUser);
-                Toast.makeText(MainActivity.this, "Adding " + selectedUser.getName() + "...", Toast.LENGTH_LONG).show();
+                if (followToast != null) followToast.cancel();
+                followToast = Toast.makeText(MainActivity.this, "Adding " + selectedUser.getName() + "...", Toast.LENGTH_LONG);
+                followToast.show();
             }
         });
     }
@@ -135,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void onStatusPosted(String post) {
+        if (postingToast != null) postingToast.cancel();
         postingToast = Toast.makeText(this, "Posting Status...", Toast.LENGTH_LONG);
         postingToast.show();
 
@@ -153,14 +160,18 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void logOutUpdateView() {
-        logOutToast.cancel();
+        if (logOutToast != null) logOutToast.cancel();
         logoutUser();
     }
 
     @Override
-    public void setCounts(int count1, int count2) {
-        followerCount.setText(getString(R.string.followerCount, String.valueOf(count1)));
-        followeeCount.setText(getString(R.string.followeeCount, String.valueOf(count2)));
+    public void setFollowerCount(int count) {
+        followerCount.setText(getString(R.string.followerCount, String.valueOf(count)));
+    }
+
+    @Override
+    public void setFollowingCount(int count) {
+        followeeCount.setText(getString(R.string.followeeCount, String.valueOf(count)));
     }
 
     @Override
@@ -187,13 +198,15 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void updateView_Follow() {
-        presenter.updateSelectedUserFollowingAndFollowers(selectedUser);
+        //presenter.updateFollowerCount(selectedUser);
+        presenter.updateFollowingCount(selectedUser);
         setFollowButton(true);
     }
 
     @Override
     public void updateView_Unfollow() {
-        presenter.updateSelectedUserFollowingAndFollowers(selectedUser);
+        //presenter.updateFollowerCount(selectedUser);
+        presenter.updateFollowingCount(selectedUser);
         setFollowButton(false);
     }
 }

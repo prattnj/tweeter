@@ -1,12 +1,12 @@
-package edu.byu.cs.tweeter.client.model.service;
+package edu.byu.cs.tweeter.client.service;
 
 import edu.byu.cs.tweeter.client.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFeedTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetStoryTask;
 import edu.byu.cs.tweeter.client.backgroundTask.PostStatusTask;
 import edu.byu.cs.tweeter.client.handler.GetItemsHandler;
-import edu.byu.cs.tweeter.client.handler.PostStatusHandler;
-import edu.byu.cs.tweeter.client.observer_interface.MainObserver;
+import edu.byu.cs.tweeter.client.handler.SimpleSuccessHandler;
+import edu.byu.cs.tweeter.client.presenter.MainPresenter;
 import edu.byu.cs.tweeter.client.presenter.PagedPresenter;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -24,8 +24,8 @@ public class StatusService {
         BackgroundTaskUtils.runTask(getStoryTask);
     }
 
-    public void postStatus(AuthToken authToken, Status newStatus, MainObserver observer) {
-        PostStatusTask statusTask = new PostStatusTask(authToken, newStatus, new PostStatusHandler(observer));
+    public void postStatus(AuthToken authToken, Status newStatus, MainPresenter.PostStatusObserver observer) {
+        PostStatusTask statusTask = new PostStatusTask(authToken, newStatus, new SimpleSuccessHandler(observer));
         BackgroundTaskUtils.runTask(statusTask);
     }
 

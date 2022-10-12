@@ -1,18 +1,21 @@
 package edu.byu.cs.tweeter.client.presenter;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.model.service.FollowService;
-import edu.byu.cs.tweeter.client.model.service.StatusService;
-import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.client.observer_interface.MainObserver;
-import edu.byu.cs.tweeter.client.observer_interface.UserObserver;
+import edu.byu.cs.tweeter.client.observer_interface.ParamSuccessObserver;
+import edu.byu.cs.tweeter.client.observer_interface.SimpleSuccessObserver;
+import edu.byu.cs.tweeter.client.service.FollowService;
+import edu.byu.cs.tweeter.client.service.StatusService;
+import edu.byu.cs.tweeter.client.service.UserService;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -32,7 +35,8 @@ public class MainPresenter extends Presenter {
 
     public interface View extends Presenter.View {
         void logOutUpdateView();
-        void setCounts(int count1, int count2);
+        void setFollowerCount(int count);
+        void setFollowingCount(int count);
         void setFollowButton(boolean isFollower);
         void setEnableFollowButton(boolean b);
         void cancelPostToast();
@@ -40,69 +44,136 @@ public class MainPresenter extends Presenter {
         void updateView_Unfollow();
     }
 
-    public class LogoutObserver extends UserObserver {
+    public class GetFollowerCountObserver extends ParamSuccessObserver<Integer> {
+
+        @Override
+        public void success(Integer var) {
+            view.setFollowerCount(var);
+        }
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message);
+            view.displayMessage(message + "(GetFollowerCount)");
         }
 
         @Override
         public void handleException(Exception exception) {
-            view.displayMessage("Exception encountered.");
-            exception.printStackTrace();
-        }
 
-        @Override
-        public void handleSuccess(User user) {
-            view.logOutUpdateView();
         }
     }
 
-    public class MainObserverConcrete extends MainObserver {
+    public class GetFollowingCountObserver extends ParamSuccessObserver<Integer> {
 
         @Override
-        public void getCountsSuccess(int count1, int count2) {
-            view.setCounts(count1, count2);
+        public void success(Integer var) {
+            view.setFollowingCount(var);
         }
 
         @Override
-        public void isFollowingSuccess(boolean isFollower) {
-            view.setFollowButton(isFollower);
+        public void handleFailure(String message) {
+            view.displayMessage(message + "(GetFollowingCount)");
         }
 
         @Override
-        public void followSuccess() {
+        public void handleException(Exception exception) {
+
+        }
+    }
+
+    public class FollowObserver extends SimpleSuccessObserver {
+
+        @Override
+        public void success() {
             view.updateView_Follow();
-        }
-
-        @Override
-        public void unfollowSuccess() {
-            view.updateView_Unfollow();
-        }
-
-        @Override
-        public void postStatusSuccess() {
-            view.cancelPostToast();
-            view.displayMessage("Successfully Posted!");
-        }
-
-        @Override
-        public void enableFollowButton() {
             view.setEnableFollowButton(true);
         }
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message);
+            view.displayMessage(message + "(Follow)");
         }
 
         @Override
         public void handleException(Exception exception) {
-            view.displayMessage("Exception encountered.");
-            exception.printStackTrace();
+
         }
     }
+
+    public class UnfollowObserver extends SimpleSuccessObserver {
+
+        @Override
+        public void success() {
+            view.updateView_Unfollow();
+            view.setEnableFollowButton(true);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage(message + "(Unfollow)");
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+
+        }
+    }
+
+    public class IsFollowerObserver extends ParamSuccessObserver<Boolean> {
+
+        @Override
+        public void success(Boolean var) {
+            view.setFollowButton(var);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage(message + "(IsFollower)");
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+
+        }
+    }
+
+    public class PostStatusObserver extends SimpleSuccessObserver {
+
+        @Override
+        public void success() {
+            view.cancelPostToast();
+            view.displayMessage("Successfully Posted!");
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage(message + "(PostStatus)");
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+
+        }
+    }
+
+    public class LogoutObserver extends SimpleSuccessObserver {
+
+        @Override
+        public void success() {
+            view.logOutUpdateView();
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage(message + "(Logout)");
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+
+        }
+    }
+
+
 
 
 
@@ -113,24 +184,28 @@ public class MainPresenter extends Presenter {
     }
 
     public void follow(User user) {
-        fService.follow(Cache.getInstance().getCurrUserAuthToken(), user, new MainObserverConcrete());
+        fService.follow(Cache.getInstance().getCurrUserAuthToken(), user, new FollowObserver());
     }
 
     public void unfollow(User user) {
-        fService.unfollow(Cache.getInstance().getCurrUserAuthToken(), user, new MainObserverConcrete());
+        fService.unfollow(Cache.getInstance().getCurrUserAuthToken(), user, new UnfollowObserver());
     }
 
     public void isFollower(User user) {
-        fService.isFollower(Cache.getInstance().getCurrUserAuthToken(), Cache.getInstance().getCurrUser(), user, new MainObserverConcrete());
+        fService.isFollower(Cache.getInstance().getCurrUserAuthToken(), Cache.getInstance().getCurrUser(), user, new IsFollowerObserver());
     }
 
-    public void updateSelectedUserFollowingAndFollowers(User selectedUser) {
-        fService.getCounts(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new MainObserverConcrete());
+    public void updateFollowerCount(User selectedUser) {
+        fService.getFollowerCount(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new GetFollowerCountObserver());
+    }
+
+    public void updateFollowingCount(User selectedUser) {
+        fService.getFollowingCount(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new GetFollowingCountObserver());
     }
 
     public void postStatus(String post) throws ParseException {
         Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), getFormattedDateTime(), parseURLs(post), parseMentions(post));
-        sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new MainObserverConcrete());
+        sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
     }
 
 
@@ -138,10 +213,10 @@ public class MainPresenter extends Presenter {
     // DO NOT TOUCH
 
     public String getFormattedDateTime() throws ParseException {
-        SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
 
-        return statusFormat.format(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8)));
+        return statusFormat.format(Objects.requireNonNull(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8))));
     }
 
     public List<String> parseURLs(String post) {

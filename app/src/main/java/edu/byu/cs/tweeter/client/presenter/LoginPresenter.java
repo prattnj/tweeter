@@ -1,7 +1,7 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.client.observer_interface.UserObserver;
+import edu.byu.cs.tweeter.client.observer_interface.ParamSuccessObserver;
+import edu.byu.cs.tweeter.client.service.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class LoginPresenter extends Presenter {
@@ -22,13 +22,13 @@ public class LoginPresenter extends Presenter {
         void navigateToMain(User user);
     }
 
-    public class LoginObserver extends UserObserver {
+    public class LoginObserver extends ParamSuccessObserver<User> {
 
         @Override
-        public void handleSuccess(User user) {
-            view.displayInfoMessage("Hello " + user.getFirstName());
+        public void success(User var) {
+            view.displayInfoMessage("Hello " + var.getFirstName());
             view.clearErrorMessage();
-            view.navigateToMain(user);
+            view.navigateToMain(var);
         }
 
         @Override

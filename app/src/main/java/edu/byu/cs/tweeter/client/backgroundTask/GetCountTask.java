@@ -6,10 +6,9 @@ import android.os.Handler;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class GetCountsTask extends AuthenticatedTask {
+public abstract class GetCountTask extends AuthenticatedTask {
 
-    public static final String COUNT_KEY1 = "count1";
-    public static final String COUNT_KEY2 = "count2";
+    public static final String COUNT_KEY = "count";
 
     /**
      * The user whose count is being retrieved.
@@ -17,10 +16,9 @@ public class GetCountsTask extends AuthenticatedTask {
      */
     private final User targetUser;
 
-    private int count1;
-    private int count2;
+    private int count;
 
-    public GetCountsTask(AuthToken authToken, User targetUser, Handler messageHandler) {
+    public GetCountTask(AuthToken authToken, User targetUser, Handler messageHandler) {
         super(authToken, messageHandler);
         this.targetUser = targetUser;
     }
@@ -31,8 +29,7 @@ public class GetCountsTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
-        count1 = runCountTask1();
-        count2 = runCountTask2();
+        count = runCountTask();
 
         // Call sendSuccessMessage if successful
         sendSuccessMessage();
@@ -40,17 +37,10 @@ public class GetCountsTask extends AuthenticatedTask {
         // sendFailedMessage()
     }
 
-    protected int runCountTask1() {
-        return 20;
-    }
-
-    protected int runCountTask2() {
-        return 20;
-    }
+    protected abstract int runCountTask();
 
     @Override
     protected void loadSuccessBundle(Bundle msgBundle) {
-        msgBundle.putInt(COUNT_KEY1, count1);
-        msgBundle.putInt(COUNT_KEY2, count2);
+        msgBundle.putInt(COUNT_KEY, count);
     }
 }
