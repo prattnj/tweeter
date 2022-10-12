@@ -250,7 +250,7 @@ public class FollowingFragment extends Fragment implements PagedPresenter.PagedV
          * data.
          */
         void loadMoreItems() {
-            if (!presenter.isLoading()) presenter.loadMoreItems(/*user*/);
+            if (!presenter.isLoading()) presenter.loadMoreItems(user);
         }
 
         /**

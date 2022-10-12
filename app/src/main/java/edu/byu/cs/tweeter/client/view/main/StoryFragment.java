@@ -309,7 +309,7 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
          * data.
          */
         void loadMoreItems() {
-            if (!presenter.isLoading()) presenter.loadMoreItems(/*user*/);
+            if (!presenter.isLoading()) presenter.loadMoreItems(user);
         }
 
         /**

@@ -43,7 +43,7 @@ public abstract class PagedPresenter<T> extends Presenter {
         }
 
         public void displayList(List<T> items, boolean hasMore) {
-            if (items == null) return;
+            //if (items == null) return;
             isLoading = false;
             view.setLoading(false);
             lastItem = (items.size() > 0) ? items.get(items.size() - 1) : null;
@@ -71,10 +71,10 @@ public abstract class PagedPresenter<T> extends Presenter {
         }
     }
 
-    public void loadMoreItems() {
+    public void loadMoreItems(User user) {
         isLoading = true;
         view.setLoading(true);
-        getItems(Cache.getInstance().getCurrUserAuthToken(), targetUser, pageSize, lastItem);
+        getItems(Cache.getInstance().getCurrUserAuthToken(), user, pageSize, lastItem);
     }
 
     public void getUser(String username) {

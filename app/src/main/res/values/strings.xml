@@ -8,6 +8,8 @@
 
     <string name="usernameHint">\@username</string>
     <string name="password">password</string>
+    <string name="usernameAutoFill">\@test</string>
+    <string name="passwordAutoFill">test</string>
     <string name="loginButton">login</string>
 
     <string name="firstName">first name</string>

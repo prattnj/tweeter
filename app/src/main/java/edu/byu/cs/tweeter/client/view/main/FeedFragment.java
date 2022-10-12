@@ -299,7 +299,7 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
          * data.
          */
         void loadMoreItems(){
-            if (!presenter.isLoading()) presenter.loadMoreItems(/*user*/);
+            if (!presenter.isLoading()) presenter.loadMoreItems(user);
         }
 
         /**
