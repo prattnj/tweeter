@@ -1,7 +1,6 @@
 package edu.byu.cs.tweeter.client.presenter;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowingPresenter extends PagedPresenter<User> {
@@ -11,7 +10,9 @@ public class FollowingPresenter extends PagedPresenter<User> {
     }
 
     @Override
-    public void getItems(AuthToken authToken, User targetUser, int pageSize, User lastItem) {
+    public void getItems(User targetUser) {
+        isLoading = true;
+        view.setLoading(true);
         fService.loadMore_Following(Cache.getInstance().getCurrUserAuthToken(), targetUser, pageSize, lastItem, new PagedObserver());
     }
 

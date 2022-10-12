@@ -43,7 +43,7 @@ public abstract class PagedPresenter<T> extends Presenter {
         }
 
         public void displayList(List<T> items, boolean hasMore) {
-            //if (items == null) return;
+            if (items == null) return; // todo remove?
             isLoading = false;
             view.setLoading(false);
             lastItem = (items.size() > 0) ? items.get(items.size() - 1) : null;
@@ -71,12 +71,6 @@ public abstract class PagedPresenter<T> extends Presenter {
         }
     }
 
-    public void loadMoreItems(User user) {
-        isLoading = true;
-        view.setLoading(true);
-        getItems(Cache.getInstance().getCurrUserAuthToken(), user, pageSize, lastItem);
-    }
-
     public void getUser(String username) {
         uService.getUser(Cache.getInstance().getCurrUserAuthToken(), username, new PagedPresenter<User>.PagedObserver());
     }
@@ -90,7 +84,7 @@ public abstract class PagedPresenter<T> extends Presenter {
     }
 
     // ABSTRACT METHODS
-    public abstract void getItems(AuthToken authToken, User targetUser, int pageSize, T lastItem);
+    public abstract void getItems(User targetUser);
     public abstract String getDescription();
 
 }

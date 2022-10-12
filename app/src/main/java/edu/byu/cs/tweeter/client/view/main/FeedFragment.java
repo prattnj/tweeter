@@ -11,6 +11,7 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,8 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
+        // todo remove
+        Log.d("feed", "FEED INST");
         return fragment;
     }
 
@@ -84,6 +87,9 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
         feedRecyclerView.addOnScrollListener(new FeedRecyclerViewPaginationScrollListener(layoutManager));
 
         feedRecyclerViewAdapter.loadMoreItems();
+
+        // todo remove
+        Log.d("feed", "FEED FRAG");
 
         return view;
     }
@@ -299,7 +305,7 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
          * data.
          */
         void loadMoreItems(){
-            if (!presenter.isLoading()) presenter.loadMoreItems(user);
+            if (!presenter.isLoading()) presenter.getItems(user);
         }
 
         /**

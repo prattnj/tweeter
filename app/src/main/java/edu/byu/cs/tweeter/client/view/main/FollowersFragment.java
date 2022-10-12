@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,8 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
+        // todo remove
+        Log.d("followers", "FOLLOWERS INST");
         return fragment;
     }
 
@@ -75,6 +78,9 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         followersRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
 
         followersRecyclerViewAdapter.loadMoreItems();
+
+        // todo remove
+        Log.d("followers", "FOLLOWERS FRAG");
 
         return view;
     }
@@ -207,13 +213,13 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
          * Binds the follower at the specified position unless we are currently loading new data. If
          * we are loading new data, the display at that position will be the data loading footer.
          *
-         * @param followingHolder the ViewHolder to which the follower should be bound.
+         * @param followersHolder the ViewHolder to which the follower should be bound.
          * @param position        the position (in the list of followers) that contains the follower to be
          *                        bound.
          */
         @Override
-        public void onBindViewHolder(@NonNull FollowersHolder followingHolder, int position) {
-            if (!presenter.isLoading()) followingHolder.bindUser(users.get(position));
+        public void onBindViewHolder(@NonNull FollowersHolder followersHolder, int position) {
+            if (!presenter.isLoading()) followersHolder.bindUser(users.get(position));
         }
 
         /**
@@ -239,11 +245,11 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         }
 
         /**
-         * Causes the Adapter to display a loading footer and make a request to get more following
+         * Causes the Adapter to display a loading footer and make a request to get more followers
          * data.
          */
         void loadMoreItems() {
-            if (!presenter.isLoading()) presenter.loadMoreItems(user);
+            if (!presenter.isLoading()) presenter.getItems(user);
         }
 
         /**

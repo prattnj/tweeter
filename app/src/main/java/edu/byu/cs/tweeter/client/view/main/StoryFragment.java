@@ -11,6 +11,7 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,8 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
+        // todo remove
+        Log.d("story", "STORY INST");
         return fragment;
     }
 
@@ -84,6 +87,9 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
         storyRecyclerView.addOnScrollListener(new StoryRecyclerViewPaginationScrollListener(layoutManager));
 
         storyRecyclerViewAdapter.loadMoreItems();
+
+        // todo remove
+        Log.d("story", "STORY FRAG");
 
         return view;
     }
@@ -309,7 +315,7 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
          * data.
          */
         void loadMoreItems() {
-            if (!presenter.isLoading()) presenter.loadMoreItems(user);
+            if (!presenter.isLoading()) presenter.getItems(user);
         }
 
         /**
