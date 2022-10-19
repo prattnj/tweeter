@@ -23,14 +23,26 @@ public class MainPresenter extends Presenter {
 
     private final UserService uService;
     private final FollowService fService;
-    private final StatusService sService;
+    private StatusService sService;
     private final View view;
+
+    public MainPresenter() { // Only in testing for M2C
+        this.view = null;
+        uService = new UserService();
+        fService = new FollowService();
+        //sService = new StatusService();
+    }
 
     public MainPresenter(View view) {
         this.view = view;
         uService = new UserService();
         fService = new FollowService();
-        sService = new StatusService();
+        //sService = new StatusService();
+    }
+
+    protected StatusService getStatusService() {
+        if (sService == null) sService = new StatusService();
+        return sService;
     }
 
     public interface View extends Presenter.View {
@@ -53,12 +65,12 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(GetFollowerCount)");
+            view.displayMessage("Failed to get follower count:" + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to get follower count due to exception: " + exception.getMessage());
         }
     }
 
@@ -71,12 +83,12 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(GetFollowingCount)");
+            view.displayMessage("Failed to get following count:" + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to get following count due to exception: " + exception.getMessage());
         }
     }
 
@@ -90,12 +102,12 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(Follow)");
+            view.displayMessage("Failed to follow: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to follow due to exception: " + exception.getMessage());
         }
     }
 
@@ -109,12 +121,12 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(Unfollow)");
+            view.displayMessage("Failed to unfollow: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to unfollow due to exception: " + exception.getMessage());
         }
     }
 
@@ -127,12 +139,12 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(IsFollower)");
+            view.displayMessage("Failed to do isFollower: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to do isFollower due to exception: " + exception.getMessage());
         }
     }
 
@@ -146,12 +158,12 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(PostStatus)");
+            view.displayMessage("Failed to post status: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to post status due to exception: " + exception.getMessage());
         }
     }
 
@@ -159,17 +171,18 @@ public class MainPresenter extends Presenter {
 
         @Override
         public void success() {
+            Cache.getInstance().clearCache();
             view.logOutUpdateView();
         }
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(Logout)");
+            view.displayMessage("Failed to logout: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-
+            view.displayMessage("Failed to logout due to exception: " + exception.getMessage());
         }
     }
 
@@ -205,7 +218,7 @@ public class MainPresenter extends Presenter {
 
     public void postStatus(String post) throws ParseException {
         Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), getFormattedDateTime(), parseURLs(post), parseMentions(post));
-        sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
+        getStatusService().postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
     }
 
 

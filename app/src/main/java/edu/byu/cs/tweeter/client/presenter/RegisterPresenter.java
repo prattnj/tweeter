@@ -36,13 +36,13 @@ public class RegisterPresenter extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            view.displayMessage(message + "(Register)");
+            view.displayMessage("Failed to register: " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-            view.displayMessage("Exception encountered.");
-            exception.printStackTrace();
+            view.displayMessage("Failed to register due to exception: " + exception.getMessage());
+            exception.printStackTrace(); // todo remove?
         }
     }
 

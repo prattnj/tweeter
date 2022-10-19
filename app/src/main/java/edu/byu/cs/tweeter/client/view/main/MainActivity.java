@@ -134,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
         Intent intent = new Intent(this, LoginActivity.class);
         //Clear everything so that the main activity is recreated with the login page.
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //Clear user data (cached data).
-        Cache.getInstance().clearCache();
         startActivity(intent);
     }
 

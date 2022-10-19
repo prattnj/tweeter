@@ -56,18 +56,16 @@ public abstract class PagedPresenter<T> extends Presenter {
             boolean isUserRelated = false;
             User user = new User();
             if (lastItem.getClass() == user.getClass()) isUserRelated = true;
-            message = "Failed to do: " + getDescription();
             if (!isUserRelated) {
                 isLoading = false;
                 view.setLoading(false);
             }
-            view.displayMessage(message);
+            view.displayMessage("Failed to do " + getDescription() + ": " + message);
         }
 
         @Override
         public void handleException(Exception exception) {
-            String message = "Failed to do " + getDescription() + " because of exception: " + exception.getMessage();
-            view.displayMessage(message);
+            view.displayMessage("Failed to do " + getDescription() + " due to exception: " + exception.getMessage());
         }
     }
 
