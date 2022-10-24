@@ -23,26 +23,14 @@ public class MainPresenter extends Presenter {
 
     private final UserService uService;
     private final FollowService fService;
-    private StatusService sService;
+    private final StatusService sService;
     private final View view;
-
-    public MainPresenter() { // Only in testing for M2C
-        this.view = null;
-        uService = new UserService();
-        fService = new FollowService();
-        //sService = new StatusService();
-    }
 
     public MainPresenter(View view) {
         this.view = view;
         uService = new UserService();
         fService = new FollowService();
-        //sService = new StatusService();
-    }
-
-    protected StatusService getStatusService() {
-        if (sService == null) sService = new StatusService();
-        return sService;
+        sService = new StatusService();
     }
 
     public interface View extends Presenter.View {
@@ -218,7 +206,7 @@ public class MainPresenter extends Presenter {
 
     public void postStatus(String post) throws ParseException {
         Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), getFormattedDateTime(), parseURLs(post), parseMentions(post));
-        getStatusService().postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
+        sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
     }
 
 
