@@ -4,7 +4,6 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.observer_interface.ParamSuccessObserver;
-import edu.byu.cs.tweeter.client.observer_interface.ServiceObserver;
 import edu.byu.cs.tweeter.client.service.FollowService;
 import edu.byu.cs.tweeter.client.service.StatusService;
 import edu.byu.cs.tweeter.client.service.UserService;
