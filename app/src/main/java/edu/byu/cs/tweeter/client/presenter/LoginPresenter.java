@@ -22,7 +22,7 @@ public class LoginPresenter extends Presenter {
         void navigateToMain(User user);
     }
 
-    public class LoginObserver extends ParamSuccessObserver<User> {
+    public class LoginObserver implements ParamSuccessObserver<User> {
 
         @Override
         public void success(User var) {

@@ -26,7 +26,7 @@ public class RegisterPresenter extends Presenter {
         void navigateToMain(User user);
     }
 
-    public class RegisterObserver extends ParamSuccessObserver<User> {
+    public class RegisterObserver implements ParamSuccessObserver<User> {
 
         @Override
         public void success(User var) {

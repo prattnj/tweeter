@@ -44,7 +44,7 @@ public class MainPresenter extends Presenter {
         void updateView_Unfollow();
     }
 
-    public class GetFollowerCountObserver extends ParamSuccessObserver<Integer> {
+    public class GetFollowerCountObserver implements ParamSuccessObserver<Integer> {
 
         @Override
         public void success(Integer var) {
@@ -62,7 +62,7 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public class GetFollowingCountObserver extends ParamSuccessObserver<Integer> {
+    public class GetFollowingCountObserver implements ParamSuccessObserver<Integer> {
 
         @Override
         public void success(Integer var) {
@@ -80,7 +80,7 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public class FollowObserver extends SimpleSuccessObserver {
+    public class FollowObserver implements SimpleSuccessObserver {
 
         @Override
         public void success() {
@@ -99,7 +99,7 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public class UnfollowObserver extends SimpleSuccessObserver {
+    public class UnfollowObserver implements SimpleSuccessObserver {
 
         @Override
         public void success() {
@@ -118,7 +118,7 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public class IsFollowerObserver extends ParamSuccessObserver<Boolean> {
+    public class IsFollowerObserver implements ParamSuccessObserver<Boolean> {
 
         @Override
         public void success(Boolean var) {
@@ -136,7 +136,7 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public class PostStatusObserver extends SimpleSuccessObserver {
+    public class PostStatusObserver implements SimpleSuccessObserver {
 
         @Override
         public void success() {
@@ -155,7 +155,7 @@ public class MainPresenter extends Presenter {
         }
     }
 
-    public class LogoutObserver extends SimpleSuccessObserver {
+    public class LogoutObserver implements SimpleSuccessObserver {
 
         @Override
         public void success() {

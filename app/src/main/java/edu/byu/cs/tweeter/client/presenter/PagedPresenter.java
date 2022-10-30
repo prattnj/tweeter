@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.client.presenter;
 import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.observer_interface.ParamSuccessObserver;
 import edu.byu.cs.tweeter.client.observer_interface.ServiceObserver;
 import edu.byu.cs.tweeter.client.service.FollowService;
 import edu.byu.cs.tweeter.client.service.StatusService;
@@ -36,7 +37,7 @@ public abstract class PagedPresenter<T> extends Presenter {
         void navigateToUser(User user);
     }
 
-    public class PagedObserver extends ServiceObserver {
+    public class PagedObserver implements ParamSuccessObserver<T> {
 
         public void displayUser(User user) {
             view.navigateToUser(user);
@@ -66,6 +67,11 @@ public abstract class PagedPresenter<T> extends Presenter {
         @Override
         public void handleException(Exception exception) {
             view.displayMessage("Failed to do " + getDescription() + " due to exception: " + exception.getMessage());
+        }
+
+        @Override
+        public void success(T var) {
+
         }
     }
 
