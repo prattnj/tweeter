@@ -12,7 +12,7 @@ public class GetStoryResponse extends PagedResponse {
     }
 
     public GetStoryResponse(List<Status> statuses, boolean hasMorePages) {
-        super(true, false);
+        super(true, hasMorePages);
         this.statuses = statuses;
     }
 
