@@ -63,8 +63,6 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
-        // todo remove
-        Log.d("feed", "FEED INST");
         return fragment;
     }
 
@@ -89,9 +87,6 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
         feedRecyclerView.addOnScrollListener(new FeedRecyclerViewPaginationScrollListener(layoutManager));
 
         feedRecyclerViewAdapter.loadMoreItems();
-
-        // todo remove
-        Log.d("feed", "FEED FRAG");
 
         return view;
     }

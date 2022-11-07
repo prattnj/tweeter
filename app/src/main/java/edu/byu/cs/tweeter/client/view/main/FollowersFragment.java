@@ -55,8 +55,6 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
-        // todo remove
-        Log.d("followers", "FOLLOWERS INST");
         return fragment;
     }
 
@@ -80,9 +78,6 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         followersRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
 
         followersRecyclerViewAdapter.loadMoreItems();
-
-        // todo remove
-        Log.d("followers", "FOLLOWERS FRAG");
 
         return view;
     }

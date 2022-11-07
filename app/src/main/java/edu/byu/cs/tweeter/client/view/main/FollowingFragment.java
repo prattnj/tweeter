@@ -55,8 +55,6 @@ public class FollowingFragment extends Fragment implements PagedPresenter.PagedV
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
-        // todo remove
-        Log.d("following", "FOLLOWING INST");
         return fragment;
     }
 
@@ -82,8 +80,6 @@ public class FollowingFragment extends Fragment implements PagedPresenter.PagedV
 
         followingRecyclerViewAdapter.loadMoreItems();
 
-        // todo remove
-        Log.d("following", "FOLLOWING FRAG");
 
         return view;
     }

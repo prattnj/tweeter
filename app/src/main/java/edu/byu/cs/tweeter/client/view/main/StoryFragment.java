@@ -63,8 +63,6 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
-        // todo remove
-        Log.d("story", "STORY INST");
         return fragment;
     }
 
@@ -89,9 +87,6 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
         storyRecyclerView.addOnScrollListener(new StoryRecyclerViewPaginationScrollListener(layoutManager));
 
         storyRecyclerViewAdapter.loadMoreItems();
-
-        // todo remove
-        Log.d("story", "STORY FRAG");
 
         return view;
     }
