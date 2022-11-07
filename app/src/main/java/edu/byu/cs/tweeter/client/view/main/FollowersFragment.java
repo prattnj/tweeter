@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
     private static final int ITEM_VIEW = 1;
     private User user;
     private FollowersRecyclerViewAdapter followersRecyclerViewAdapter;
-    private final FollowersPresenter presenter = new FollowersPresenter(this);
+    private FollowersPresenter presenter;
 
     /**
      * Creates an instance of the fragment and places the target user in an arguments
@@ -55,8 +54,6 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         args.putSerializable(USER_KEY, user);
 
         fragment.setArguments(args);
-        // todo remove
-        Log.d("followers", "FOLLOWERS INST");
         return fragment;
     }
 
@@ -66,6 +63,8 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+
+        presenter = new FollowersPresenter(this);
 
         RecyclerView followersRecyclerView = view.findViewById(R.id.followersRecyclerView);
 
@@ -78,9 +77,6 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
         followersRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
 
         followersRecyclerViewAdapter.loadMoreItems();
-
-        // todo remove
-        Log.d("followers", "FOLLOWERS FRAG");
 
         return view;
     }
