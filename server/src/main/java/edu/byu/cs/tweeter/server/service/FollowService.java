@@ -60,6 +60,8 @@ public class FollowService {
             throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
+        } else if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a valid authtoken");
         }
         Pair<List<User>, Boolean> ret = getFakeData().getPageOfUsers(request.getLastFollowerAlias(), request.getLimit(), request.getFolloweeAlias());
         return new GetFollowersResponse(ret.getFirst(), ret.getSecond());
