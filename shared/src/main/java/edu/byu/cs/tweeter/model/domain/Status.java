@@ -29,6 +29,8 @@ public class Status implements Serializable {
      */
     public List<String> mentions;
 
+    public String statusID;
+
     public Status() {
     }
 
@@ -38,6 +40,7 @@ public class Status implements Serializable {
         this.datetime = datetime;
         this.urls = urls;
         this.mentions = mentions;
+        this.statusID = user.getAlias() + datetime;
     }
 
     public void setUser(User user) {
@@ -62,6 +65,10 @@ public class Status implements Serializable {
 
     public List<String> getMentions() {
         return mentions;
+    }
+
+    public String getStatusID() {
+        return statusID;
     }
 
     @Override
