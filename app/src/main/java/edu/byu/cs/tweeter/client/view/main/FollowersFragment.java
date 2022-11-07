@@ -39,7 +39,7 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
     private static final int ITEM_VIEW = 1;
     private User user;
     private FollowersRecyclerViewAdapter followersRecyclerViewAdapter;
-    private final FollowersPresenter presenter = new FollowersPresenter(this);
+    private FollowersPresenter presenter;
 
     /**
      * Creates an instance of the fragment and places the target user in an arguments
@@ -66,6 +66,8 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+
+        presenter = new FollowersPresenter(this);
 
         RecyclerView followersRecyclerView = view.findViewById(R.id.followersRecyclerView);
 
