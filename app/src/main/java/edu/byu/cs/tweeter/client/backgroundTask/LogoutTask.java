@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.client.backgroundTask;
 
 import android.os.Handler;
 
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.AuthenticatedTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 
 /**
@@ -15,6 +16,7 @@ public class LogoutTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
+        // TODO: M3
         // We could do this from the presenter, without a task and handler, but we will
         // eventually remove the auth token from  the DB and will need this then.
 

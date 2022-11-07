@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import java.util.Random;
 
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.AuthenticatedTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -35,6 +36,7 @@ public class IsFollowerTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
+        // TODO: M3
         isFollower = new Random().nextInt() > 0;
 
         // Call sendSuccessMessage if successful

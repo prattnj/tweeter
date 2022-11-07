@@ -2,7 +2,7 @@ package edu.byu.cs.tweeter.client.handler;
 
 import android.os.Message;
 
-import edu.byu.cs.tweeter.client.backgroundTask.GetCountTask;
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.GetCountTask;
 import edu.byu.cs.tweeter.client.observer_interface.ParamSuccessObserver;
 
 public class GetCountHandler extends BaseHandler {

@@ -5,7 +5,7 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import edu.byu.cs.tweeter.client.backgroundTask.BackgroundTask;
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.BackgroundTask;
 import edu.byu.cs.tweeter.client.observer_interface.ServiceObserver;
 
 public abstract class BaseHandler extends Handler {

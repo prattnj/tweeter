@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.client.backgroundTask;
 import android.os.Bundle;
 import android.os.Handler;
 
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.AuthenticatedTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -27,6 +28,9 @@ public class GetUserTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
+
+        // TODO: M3
+
         user = getUser();
 
         // Call sendSuccessMessage if successful

@@ -5,7 +5,7 @@ import android.os.Message;
 import java.util.List;
 
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersTask;
-import edu.byu.cs.tweeter.client.backgroundTask.PagedTask;
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.PagedTask;
 import edu.byu.cs.tweeter.client.presenter.PagedPresenter;
 
 public class GetItemsHandler<T> extends BaseHandler {

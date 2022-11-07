@@ -53,9 +53,7 @@ public abstract class PagedPresenter<T> extends Presenter {
 
         @Override
         public void handleFailure(String message) {
-            boolean isUserRelated = false;
-            User user = new User();
-            if (lastItem.getClass() == user.getClass()) isUserRelated = true;
+            boolean isUserRelated = lastItem.getClass() == User.class;
             if (!isUserRelated) {
                 isLoading = false;
                 view.setLoading(false);
