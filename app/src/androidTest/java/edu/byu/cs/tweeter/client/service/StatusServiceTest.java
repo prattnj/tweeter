@@ -99,7 +99,7 @@ public class StatusServiceTest {
     @Test
     public void testStatusService() throws InterruptedException {
 
-        int pageSize = 1;
+        int pageSize = 10;
 
         serviceSpy.loadMore_Story(dummyToken, dummyUser, pageSize, null, observer);
         awaitCountDownLatch();
