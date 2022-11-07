@@ -47,7 +47,7 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
     private static final int ITEM_VIEW = 1;
     private User user;
     private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
-    private final FeedPresenter presenter = new FeedPresenter(this);
+    private FeedPresenter presenter;
 
     /**
      * Creates an instance of the fragment and places the target user in an arguments
@@ -75,6 +75,8 @@ public class FeedFragment extends Fragment implements PagedPresenter.PagedView<S
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+
+        presenter = new FeedPresenter(this);
 
         RecyclerView feedRecyclerView = view.findViewById(R.id.feedRecyclerView);
 
