@@ -14,7 +14,7 @@ public class FeedPresenter {
     private final UserService uService;
     private final View view;
 
-    private Status lastStatus;
+    private Status lastStatus = null;
     private static final int PAGE_SIZE = 10;
     private boolean hasMorePages;
     private boolean isLoading = false;

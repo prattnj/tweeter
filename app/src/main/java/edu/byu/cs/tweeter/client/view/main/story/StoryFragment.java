@@ -46,7 +46,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
     private static final int ITEM_VIEW = 1;
     private User user;
     private StoryRecyclerViewAdapter storyRecyclerViewAdapter;
-    private final StoryPresenter presenter = new StoryPresenter(this);
+    private StoryPresenter presenter;
 
     /**
      * Creates an instance of the fragment and places the target user in an arguments
@@ -72,6 +72,8 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+
+        presenter = new StoryPresenter(this);
 
         RecyclerView storyRecyclerView = view.findViewById(R.id.storyRecyclerView);
 
