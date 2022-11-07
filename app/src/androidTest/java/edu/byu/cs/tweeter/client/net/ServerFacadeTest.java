@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.service;
+package edu.byu.cs.tweeter.client.net;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

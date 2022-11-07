@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.client.handler;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ public abstract class BaseHandler extends Handler {
     ServiceObserver observer;
 
     public BaseHandler(ServiceObserver observer) {
+        super(Looper.getMainLooper());
         this.observer = observer;
     }
 

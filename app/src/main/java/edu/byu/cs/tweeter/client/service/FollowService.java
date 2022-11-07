@@ -1,31 +1,33 @@
 package edu.byu.cs.tweeter.client.service;
 
+import java.util.List;
+
 import edu.byu.cs.tweeter.client.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.backgroundTask.FollowTask;
-import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.GetCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingCountTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.backgroundTask.IsFollowerTask;
 import edu.byu.cs.tweeter.client.backgroundTask.UnfollowTask;
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.GetCountTask;
 import edu.byu.cs.tweeter.client.handler.GetCountHandler;
 import edu.byu.cs.tweeter.client.handler.GetItemsHandler;
 import edu.byu.cs.tweeter.client.handler.IsFollowerHandler;
 import edu.byu.cs.tweeter.client.handler.SimpleSuccessHandler;
+import edu.byu.cs.tweeter.client.observer_interface.DoubleParamSuccessObserver;
 import edu.byu.cs.tweeter.client.presenter.MainPresenter;
-import edu.byu.cs.tweeter.client.presenter.PagedPresenter;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService {
 
-    public void loadMore_Following(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, PagedPresenter<User>.PagedObserver observer) {
+    public void loadMore_Following(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, DoubleParamSuccessObserver<List<User>, Boolean> observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken, user, pageSize, lastFollowee, new GetItemsHandler<>(observer));
         BackgroundTaskUtils.runTask(getFollowingTask);
     }
 
-    public void loadMore_Followers(AuthToken currUserAuthToken, User user, int pageSize, User lastFollower, PagedPresenter<User>.PagedObserver observer) {
+    public void loadMore_Followers(AuthToken currUserAuthToken, User user, int pageSize, User lastFollower, DoubleParamSuccessObserver<List<User>, Boolean> observer) {
         GetFollowersTask getFollowersTask = new GetFollowersTask(currUserAuthToken, user, pageSize, lastFollower, new GetItemsHandler<>(observer));
         BackgroundTaskUtils.runTask(getFollowersTask);
     }
