@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.server.service;
 
 import java.util.List;
+import java.util.Random;
 
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowRequest;
@@ -25,8 +26,6 @@ import edu.byu.cs.tweeter.util.Pair;
  * Contains the business logic for getting the users a user is following.
  */
 public class FollowService {
-
-    // todo: return fake data for everything function in this service
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -76,15 +75,33 @@ public class FollowService {
     }
 
     public FollowResponse follow(FollowRequest request) {
-        return null; // todo
+        if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs a valid authToken");
+        } else if (request.getFolloweeAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have an alias");
+        }
+        return new FollowResponse(true);
     }
 
     public UnfollowResponse unfollow(UnfollowRequest request) {
-        return null; // todo
+        if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs a valid authToken");
+        } else if (request.getFolloweeAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have an alias");
+        }
+        return new UnfollowResponse(true);
     }
 
     public IsFollowerResponse isFollower(IsFollowerRequest request) {
-        return null; // todo
+        if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs a valid authToken");
+        } else if (request.getFolloweeAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
+        } else if (request.getFollowerAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
+        }
+        boolean isFollower = new Random().nextInt() > 0;
+        return new IsFollowerResponse(true, isFollower);
     }
 
     // To be removed after M3

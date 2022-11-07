@@ -207,7 +207,7 @@ public class FakeData {
      */
     public Pair<List<Status>, Boolean> getPageOfStatus(Status lastStatus, int limit) {
 
-        Pair<List<Status>, Boolean> result = new Pair<>(new ArrayList<>(), false);
+        Pair<List<Status>, Boolean> result = new Pair<>(new ArrayList<Status>(), false);
 
         int index = 0;
         List<Status> fakeStatuses = getFakeStatuses();

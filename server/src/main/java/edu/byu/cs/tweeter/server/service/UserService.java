@@ -14,12 +14,10 @@ import edu.byu.cs.tweeter.util.FakeData;
 
 public class UserService {
 
-    // todo: return fake data for everything function in this service
-
     public LoginResponse login(LoginRequest request) {
-        if(request.getUsername() == null){
+        if (request.getUsername() == null){
             throw new RuntimeException("[Bad Request] Missing a username");
-        } else if(request.getPassword() == null) {
+        } else if (request.getPassword() == null) {
             throw new RuntimeException("[Bad Request] Missing a password");
         }
         User user = getDummyUser();
@@ -28,15 +26,38 @@ public class UserService {
     }
 
     public LogoutResponse logout(LogoutRequest request) {
-        return null; // todo
+        if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Missing an authtoken");
+        }
+        return new LogoutResponse(true);
     }
 
     public RegisterResponse register(RegisterRequest request) {
-        return null; // todo
+        if (request.getUsername() == null){
+            throw new RuntimeException("[Bad Request] Missing a username");
+        } else if (request.getPassword() == null) {
+            throw new RuntimeException("[Bad Request] Missing a password");
+        } else if (request.getFirstname() == null) {
+            throw new RuntimeException("[Bad Request] Missing a first name");
+        } else if (request.getLastname() == null) {
+            throw new RuntimeException("[Bad Request] Missing a last name");
+        } else if (request.getImage() == null) {
+            throw new RuntimeException("[Bad Request] Missing an image");
+        }
+        User user = getDummyUser();
+        AuthToken authToken = getDummyAuthToken();
+        return new RegisterResponse(user, authToken);
     }
 
     public GetUserResponse getUser(GetUserRequest request) {
-        return null; // todo
+        if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs a valid authToken");
+        } else if (request.getAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have an alias");
+        }
+        User user = getFakeData().findUserByAlias(request.getAlias());
+        if (user == null) return new GetUserResponse(false, "No user found");
+        else return new GetUserResponse(true, user);
     }
 
     /**

@@ -37,7 +37,12 @@ public class StatusService {
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request) {
-        return null; // todo
+        if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs a valid authToken");
+        } else if (request.getStatus() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a status object");
+        }
+        return new PostStatusResponse(true);
     }
 
     private FakeData getFakeData() {
