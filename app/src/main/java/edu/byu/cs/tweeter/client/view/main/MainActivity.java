@@ -196,14 +196,14 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void updateView_Follow() {
-        //presenter.updateFollowerCount(selectedUser);
+        presenter.updateFollowerCount(selectedUser);
         presenter.updateFollowingCount(selectedUser);
         setFollowButton(true);
     }
 
     @Override
     public void updateView_Unfollow() {
-        //presenter.updateFollowerCount(selectedUser);
+        presenter.updateFollowerCount(selectedUser);
         presenter.updateFollowingCount(selectedUser);
         setFollowButton(false);
     }
