@@ -43,7 +43,5 @@ public class GetFollowingCountTask extends GetCountTask {
             Log.e(LOG_TAG, "Failed to get following count", ex);
             sendExceptionMessage(ex);
         }
-
-        //return 20;
     }
 }

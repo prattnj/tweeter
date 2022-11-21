@@ -60,11 +60,6 @@ public class IsFollowerTask extends AuthenticatedTask {
             Log.e(LOG_TAG, "Failed to do isFollow", ex);
             sendExceptionMessage(ex);
         }
-
-        // Call sendSuccessMessage if successful
-        //sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 
     @Override

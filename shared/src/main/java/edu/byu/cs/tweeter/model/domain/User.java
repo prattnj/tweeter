@@ -63,6 +63,10 @@ public class User implements Comparable<User>, Serializable {
         this.alias = alias;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }

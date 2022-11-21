@@ -21,7 +21,6 @@ public abstract class PagedPresenter<T> extends Presenter {
     protected T lastItem;
     protected boolean hasMorePages;
     protected boolean isLoading;
-    //protected boolean isGettingUser;
     protected PagedView<T> view;
 
     public PagedPresenter() {
@@ -43,7 +42,7 @@ public abstract class PagedPresenter<T> extends Presenter {
         }
 
         public void displayList(List<T> items, boolean hasMore) {
-            if (items == null) return; // todo remove?
+            if (items == null) return;
             isLoading = false;
             view.setLoading(false);
             lastItem = (items.size() > 0) ? items.get(items.size() - 1) : null;

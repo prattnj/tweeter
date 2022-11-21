@@ -10,15 +10,11 @@ public class AuthToken implements Serializable {
     /**
      * Value of the auth token.
      */
-    public String token;
-    public String username;
-    /**
-     * String representation of date/time at which the auth token was created.
-     */
-    public LocalDateTime datetime;
+    private String token;
+    private String username;
+    private LocalDateTime datetime;
 
-    public AuthToken() {
-    }
+    public AuthToken() {}
 
     public AuthToken(String token) {
         this.token = token;
@@ -40,5 +36,9 @@ public class AuthToken implements Serializable {
 
     public LocalDateTime getDatetime() {
         return datetime;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

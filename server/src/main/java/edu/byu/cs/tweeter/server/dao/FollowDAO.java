@@ -7,7 +7,7 @@ import edu.byu.cs.tweeter.util.Pair;
 
 public interface FollowDAO {
 
-    void insert(String follower, String followee);
+    void insert(User follower, User followee);
     List<User> getAllFollowers(String username);
     Pair<List<User>, Boolean> getPageFollowing(String username, String lastUser, int limit);
     Pair<List<User>, Boolean> getPageFollowers(String username, String lastUser, int limit);

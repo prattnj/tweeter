@@ -28,7 +28,6 @@ public class GetFollowingTask extends PagedUserTask {
 
     @Override
     protected void getItems() {
-        // TODO: M3
         try {
             String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
             String lastFolloweeAlias = lastItem == null ? null : lastItem.getAlias();
@@ -48,7 +47,6 @@ public class GetFollowingTask extends PagedUserTask {
             Log.e(LOG_TAG, "Failed to get following", ex);
             sendExceptionMessage(ex);
         }
-        //return getFakeData().getPageOfUsers(getLastItem(), getLimit(), getTargetUser());
     }
 
 }

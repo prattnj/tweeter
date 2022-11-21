@@ -34,7 +34,7 @@ public class FollowTask extends AuthenticatedTask {
 
         try {
 
-            FollowRequest request = new FollowRequest(authToken, followee.getAlias());
+            FollowRequest request = new FollowRequest(authToken, followee);
             FollowResponse response = getServerFacade().follow(request, URL_PATH);
 
             if (response.isSuccess()) {
@@ -47,14 +47,6 @@ public class FollowTask extends AuthenticatedTask {
             Log.e(LOG_TAG, "Failed to follow", ex);
             sendExceptionMessage(ex);
         }
-
-        // We could do this from the presenter, without a task and handler, but we will
-        // eventually access the database from here when we aren't using dummy data.
-
-        // Call sendSuccessMessage if successful
-        //sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 
 }

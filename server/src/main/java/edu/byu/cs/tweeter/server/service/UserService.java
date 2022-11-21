@@ -48,7 +48,7 @@ public class UserService {
             throw new RuntimeException("[Bad Request] Missing an authtoken");
         }
 
-        authtoken_dao.remove(request.getAuthToken().token);
+        authtoken_dao.remove(request.getAuthToken().getUsername());
         return new LogoutResponse(true);
     }
 
@@ -90,6 +90,6 @@ public class UserService {
     }
 
     private String myHash(String password) {
-        return null; // TODO
+        return Integer.toString(password.hashCode()); // todo: more complex
     }
 }

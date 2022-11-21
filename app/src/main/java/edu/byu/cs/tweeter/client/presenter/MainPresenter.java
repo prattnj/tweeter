@@ -1,15 +1,8 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import android.annotation.SuppressLint;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.observer_interface.ParamSuccessObserver;
@@ -205,8 +198,8 @@ public class MainPresenter extends Presenter {
         fService.getFollowingCount(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new GetFollowingCountObserver());
     }
 
-    public void postStatus(String post) throws ParseException {
-        Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), LocalDateTime.parse(getFormattedDateTime()), parseURLs(post), parseMentions(post));
+    public void postStatus(String post) {
+        Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), LocalDateTime.now(), parseURLs(post), parseMentions(post));
         sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
     }
 
@@ -214,12 +207,12 @@ public class MainPresenter extends Presenter {
 
     // DO NOT TOUCH
 
-    public String getFormattedDateTime() throws ParseException {
+    /*public String getFormattedDateTime() throws ParseException {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
 
         return statusFormat.format(Objects.requireNonNull(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8))));
-    }
+    }*/
 
     public List<String> parseURLs(String post) {
         List<String> containedUrls = new ArrayList<>();

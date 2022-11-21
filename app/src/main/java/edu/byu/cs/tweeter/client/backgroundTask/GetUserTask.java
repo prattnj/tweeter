@@ -54,11 +54,6 @@ public class GetUserTask extends AuthenticatedTask {
             Log.e(LOG_TAG, "Failed to get user", ex);
             sendExceptionMessage(ex);
         }
-
-        // Call sendSuccessMessage if successful
-        //sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 
     @Override

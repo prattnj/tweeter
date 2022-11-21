@@ -12,25 +12,25 @@ public class Status implements Serializable {
     /**
      * Text for the status.
      */
-    public String post;
+    private String post;
     /**
      * User who sent the status.
      */
-    public User user;
+    private User user;
     /**
      * String representation of the date/time at which the status was sent.
      */
-    public LocalDateTime datetime;
+    private LocalDateTime datetime;
     /**
      * URLs contained in the post text.
      */
-    public List<String> urls;
+    private List<String> urls;
     /**
      * User mentions contained in the post text.
      */
-    public List<String> mentions;
+    private List<String> mentions;
 
-    public String statusID;
+    private String statusID;
 
     public Status() {
     }

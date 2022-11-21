@@ -7,6 +7,7 @@ import edu.byu.cs.tweeter.model.net.request.GetFollowingRequest;
 import edu.byu.cs.tweeter.model.net.response.GetFollowingResponse;
 import edu.byu.cs.tweeter.server.dao.DynamoAuthtokenDAO;
 import edu.byu.cs.tweeter.server.dao.DynamoFollowDAO;
+import edu.byu.cs.tweeter.server.dao.DynamoUserDAO;
 import edu.byu.cs.tweeter.server.service.FollowService;
 
 /**
@@ -25,7 +26,7 @@ public class GetFollowingHandler implements RequestHandler<GetFollowingRequest, 
      */
     @Override
     public GetFollowingResponse handleRequest(GetFollowingRequest request, Context context) {
-        FollowService service = new FollowService(new DynamoFollowDAO(), new DynamoAuthtokenDAO());
+        FollowService service = new FollowService(new DynamoFollowDAO(), new DynamoAuthtokenDAO(), new DynamoUserDAO());
         return service.getFollowing(request);
     }
 }

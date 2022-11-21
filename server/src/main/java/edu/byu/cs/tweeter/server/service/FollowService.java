@@ -19,6 +19,7 @@ import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
 import edu.byu.cs.tweeter.server.dao.AuthtokenDAO;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
+import edu.byu.cs.tweeter.server.dao.UserDAO;
 import edu.byu.cs.tweeter.util.Pair;
 
 /**
@@ -28,10 +29,12 @@ public class FollowService {
 
     private final FollowDAO follow_dao;
     private final AuthtokenDAO authtoken_dao;
+    private final UserDAO user_dao;
 
-    public FollowService(FollowDAO follow_dao, AuthtokenDAO authtoken_dao) {
+    public FollowService(FollowDAO follow_dao, AuthtokenDAO authtoken_dao, UserDAO user_dao) {
         this.follow_dao = follow_dao;
         this.authtoken_dao = authtoken_dao;
+        this.user_dao = user_dao;
     }
 
     public GetFollowingResponse getFollowing(GetFollowingRequest request) {
@@ -91,14 +94,15 @@ public class FollowService {
     public FollowResponse follow(FollowRequest request) {
         if (request.getAuthToken() == null) {
             throw new RuntimeException("[Bad Request] Request needs a valid authToken");
-        } else if (request.getFolloweeAlias() == null) {
-            throw new RuntimeException("[Bad Request] Request needs to have an alias");
+        } else if (request.getFollowee() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a user");
         } else if (!authtoken_dao.validate(request.getAuthToken())) {
             throw new RuntimeException("[Bad Request] Invalid authtoken");
         }
 
-        String follower = authtoken_dao.getUsername(request.getAuthToken().token);
-        follow_dao.insert(follower, request.getFolloweeAlias());
+        String followerAlias = authtoken_dao.getUsername(request.getAuthToken().getToken());
+        User follower = user_dao.find(followerAlias);
+        follow_dao.insert(follower, request.getFollowee());
         return new FollowResponse(true);
     }
 
@@ -111,7 +115,7 @@ public class FollowService {
             throw new RuntimeException("[Bad Request] Invalid authtoken");
         }
 
-        String follower = authtoken_dao.getUsername(request.getAuthToken().token);
+        String follower = authtoken_dao.getUsername(request.getAuthToken().getToken());
         follow_dao.remove(follower, request.getFolloweeAlias());
         return new UnfollowResponse(true);
     }

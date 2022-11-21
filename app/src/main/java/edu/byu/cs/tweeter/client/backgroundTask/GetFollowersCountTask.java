@@ -41,7 +41,5 @@ public class GetFollowersCountTask extends GetCountTask {
             Log.e(LOG_TAG, "Failed to get followers count", ex);
             sendExceptionMessage(ex);
         }
-
-        // return 20;
     }
 }

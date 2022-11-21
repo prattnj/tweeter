@@ -12,10 +12,11 @@ public class UserBean {
     private String password;
     private String imageUrl;
 
-    public UserBean(String firstName, String lastName, String alias, String imageUrl) {
+    public UserBean(String firstName, String lastName, String alias, String password, String imageUrl) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.alias = alias;
+        this.password = password;
         this.imageUrl = imageUrl;
     }
 

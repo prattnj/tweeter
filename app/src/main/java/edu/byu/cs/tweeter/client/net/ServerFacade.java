@@ -38,8 +38,6 @@ import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
  */
 public class ServerFacade {
 
-    // TODO: Set this to the invoke URL of your API. Find it by going to your API in AWS, clicking
-    //  on stages in the right-side menu, and clicking on the stage you deployed your API to.
     private static final String SERVER_URL = "https://76kaj1dosb.execute-api.us-west-2.amazonaws.com/dev";
 
     private final ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);

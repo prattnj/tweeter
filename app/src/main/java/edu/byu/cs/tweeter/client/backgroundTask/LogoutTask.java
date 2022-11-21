@@ -41,13 +41,5 @@ public class LogoutTask extends AuthenticatedTask {
             Log.e(LOG_TAG, "Failed to logout", ex);
             sendExceptionMessage(ex);
         }
-
-        // We could do this from the presenter, without a task and handler, but we will
-        // eventually remove the auth token from  the DB and will need this then.
-
-        // Call sendSuccessMessage if successful
-        //sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 }

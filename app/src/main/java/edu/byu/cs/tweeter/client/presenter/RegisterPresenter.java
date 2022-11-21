@@ -42,7 +42,7 @@ public class RegisterPresenter extends Presenter {
         @Override
         public void handleException(Exception exception) {
             view.displayMessage("Failed to register due to exception: " + exception.getMessage());
-            exception.printStackTrace(); // todo remove?
+            exception.printStackTrace();
         }
     }
 
