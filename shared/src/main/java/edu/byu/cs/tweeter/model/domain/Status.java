@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.model.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ public class Status implements Serializable {
     /**
      * String representation of the date/time at which the status was sent.
      */
-    public String datetime;
+    public LocalDateTime datetime;
     /**
      * URLs contained in the post text.
      */
@@ -34,7 +35,7 @@ public class Status implements Serializable {
     public Status() {
     }
 
-    public Status(String post, User user, String datetime, List<String> urls, List<String> mentions) {
+    public Status(String post, User user, LocalDateTime datetime, List<String> urls, List<String> mentions) {
         this.post = post;
         this.user = user;
         this.datetime = datetime;
@@ -51,7 +52,7 @@ public class Status implements Serializable {
         return user;
     }
 
-    public String getDate() {
+    public LocalDateTime getDate() {
         return datetime;
     }
 

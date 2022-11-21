@@ -253,7 +253,7 @@ public class FollowersFragment extends Fragment implements PagedPresenter.PagedV
          * loading footer view) at the bottom of the list.
          */
         private void addLoadingFooter() {
-            addItem(new User("Dummy", "User", "dummyurl"));
+            addItem(new User("Dummy", "User", "@dummyalias", "dummyurl"));
         }
 
         /**

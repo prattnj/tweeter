@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.util;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -129,7 +130,7 @@ public class FakeData {
                         "\n" + url;
                 calendar.add(Calendar.MINUTE, 1);
                 String datetime = calendar.getTime().toString();
-                Status status = new Status(post, sender, datetime, urls, mentions);
+                Status status = new Status(post, sender, LocalDateTime.parse(datetime), urls, mentions);
                 allStatuses.add(status);
             }
         }
@@ -146,7 +147,7 @@ public class FakeData {
     }
 
     public AuthToken getAuthToken() {
-        return new AuthToken("faketoken", "fakedatetime");
+        return new AuthToken("faketoken", "fakealias", LocalDateTime.now());
         //return authToken;
     }
 

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -205,7 +206,7 @@ public class MainPresenter extends Presenter {
     }
 
     public void postStatus(String post) throws ParseException {
-        Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), getFormattedDateTime(), parseURLs(post), parseMentions(post));
+        Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), LocalDateTime.parse(getFormattedDateTime()), parseURLs(post), parseMentions(post));
         sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
     }
 

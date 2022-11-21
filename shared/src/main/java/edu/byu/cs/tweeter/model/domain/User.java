@@ -11,6 +11,7 @@ public class User implements Comparable<User>, Serializable {
     private String firstName;
     private String lastName;
     private String alias;
+    private String password;
     private String imageUrl;
 
     /**
@@ -18,14 +19,19 @@ public class User implements Comparable<User>, Serializable {
      */
     private User() {}
 
-    public User(String firstName, String lastName, String imageURL) {
-        this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL);
-    }
-
     public User(String firstName, String lastName, String alias, String imageURL) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.alias = alias;
+        this.password = "fake_password";
+        this.imageUrl = imageURL;
+    }
+
+    public User(String firstName, String lastName, String alias, String password, String imageURL) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.alias = alias;
+        this.password = password;
         this.imageUrl = imageURL;
     }
 
@@ -84,6 +90,7 @@ public class User implements Comparable<User>, Serializable {
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", alias='" + alias + '\'' +
+                ", password='" + password + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }

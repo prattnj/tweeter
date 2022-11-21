@@ -11,18 +11,19 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.GetFollowingRequest;
 import edu.byu.cs.tweeter.model.net.response.GetFollowingResponse;
+import edu.byu.cs.tweeter.server.dao.DynamoFollowDAO;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 
 public class FollowServiceTest {
 
     private GetFollowingRequest request;
     private GetFollowingResponse expectedResponse;
-    private FollowDAO mockFollowDAO;
+    private DynamoFollowDAO mockFollowDAO;
     private FollowService followServiceSpy;
 
     @BeforeEach
     public void setup() {
-        AuthToken authToken = new AuthToken();
+        /*AuthToken authToken = new AuthToken();
 
         User currentUser = new User("FirstName", "LastName", null);
 
@@ -38,11 +39,11 @@ public class FollowServiceTest {
 
         // Setup a mock FollowDAO that will return known responses
         expectedResponse = new GetFollowingResponse(Arrays.asList(resultUser1, resultUser2, resultUser3), false);
-        mockFollowDAO = Mockito.mock(FollowDAO.class);
+        mockFollowDAO = Mockito.mock(DynamoFollowDAO.class);
         Mockito.when(mockFollowDAO.getFollowees(request)).thenReturn(expectedResponse);
 
         followServiceSpy = Mockito.spy(FollowService.class);
-        Mockito.when(followServiceSpy.getFollowingDAO()).thenReturn(mockFollowDAO);
+        Mockito.when(followServiceSpy.getFollowingDAO()).thenReturn(mockFollowDAO);*/
     }
 
     /**
