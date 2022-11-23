@@ -54,6 +54,7 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
         firstName = view.findViewById(R.id.registerFirstName);
         lastName = view.findViewById(R.id.registerLastName);
         alias = view.findViewById(R.id.registerUsername);
+        alias.setText(R.string.usernameAutoFill);
         password = view.findViewById(R.id.registerPassword);
         imageUploaderButton = view.findViewById(R.id.imageButton);
         imageToUpload = view.findViewById(R.id.registerImage);

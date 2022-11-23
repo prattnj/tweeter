@@ -14,10 +14,10 @@ public class GetFeedTest {
 
     @Test
     public void testGetFeed() {
-        AuthToken token = new AuthToken("cd026aef-1768-4e01-8f61-99d6c3921e16", "@kanyegrohl", "2022-11-23T00:46:42.298888");
-        GetFeedRequest req = new GetFeedRequest(token, "@kanyegrohl", 50, null);
+        AuthToken token = new AuthToken("576a327f-e91a-42fc-aebe-36e73f2a1a8b", "@njpratt", "2022-11-23T05:38:10.714262");
+        GetFeedRequest req = new GetFeedRequest(token, "@njpratt", 50, null);
         GetFeedResponse resp = new StatusService(new DynamoFeedDAO(), new DynamoStoryDAO(), new DynamoFollowDAO(), new DynamoAuthtokenDAO()).getFeed(req);
-        GetFeedRequest req2 = new GetFeedRequest(token, "@kanyegrohl", 50, resp.getStatuses().get(resp.getStatuses().size()-1));
+        GetFeedRequest req2 = new GetFeedRequest(token, "@njpratt", 50, resp.getStatuses().get(resp.getStatuses().size()-1));
         GetFeedResponse resp2 = new StatusService(new DynamoFeedDAO(), new DynamoStoryDAO(), new DynamoFollowDAO(), new DynamoAuthtokenDAO()).getFeed(req2);
         System.out.println("debug");
     }
