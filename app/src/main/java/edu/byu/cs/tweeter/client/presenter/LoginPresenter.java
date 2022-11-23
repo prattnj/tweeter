@@ -39,7 +39,7 @@ public class LoginPresenter extends Presenter {
 
         @Override
         public void handleException(Exception exception) {
-            view.displayErrorMessage("Exception encountered.");
+            view.displayInfoMessage(exception.getMessage());
             exception.printStackTrace();
         }
     }
