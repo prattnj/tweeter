@@ -154,7 +154,7 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
             Picasso.get().load(status.getUser().getImageUrl()).into(userImage);
             userAlias.setText(status.getUser().getAlias());
             userName.setText(status.getUser().getName());
-            datetime.setText(status.getDate().toString());
+            datetime.setText(status.getDatetime());
 
             // @mentions and urls clickable
             SpannableString spannableString = new SpannableString(status.getPost());
@@ -320,7 +320,7 @@ public class StoryFragment extends Fragment implements PagedPresenter.PagedView<
          * loading footer view) at the bottom of the list.
          */
         private void addLoadingFooter() {
-            addItem(new Status("Dummy Post", new User("firstName", "lastName", "@coolAlias", null), LocalDateTime.parse("2020-10-31 00:00:00"), new ArrayList<>() {{
+            addItem(new Status("Dummy Post", new User("firstName", "lastName", "@coolAlias", null), LocalDateTime.now().toString(), new ArrayList<>() {{
                 add("https://youtube.com");
             }}, new ArrayList<>() {{
                 add("@Dude1");

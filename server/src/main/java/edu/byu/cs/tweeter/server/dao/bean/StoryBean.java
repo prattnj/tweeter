@@ -11,7 +11,7 @@ public class StoryBean {
 
     private String sender_alias;
     private String post;
-    private String datetime;
+    private String timestamp;
     private List<String> urls;
     private List<String> mentions;
     private String statusID;
@@ -20,11 +20,13 @@ public class StoryBean {
     private String password;
     private String imageUrl;
 
-    public StoryBean(String creatorAlias, String post, String datetime, List<String> urls, List<String> mentions, String statusID,
+    public StoryBean() {}
+
+    public StoryBean(String sender_alias, String post, String datetime, List<String> urls, List<String> mentions, String statusID,
                      String firstName, String lastName, String password, String imageUrl) {
-        this.sender_alias = creatorAlias;
+        this.sender_alias = sender_alias;
         this.post = post;
-        this.datetime = datetime;
+        this.timestamp = datetime;
         this.urls = urls;
         this.mentions = mentions;
         this.statusID = statusID;
@@ -35,7 +37,7 @@ public class StoryBean {
     }
 
     @DynamoDbPartitionKey
-    public String getSenderAlias() {
+    public String getSender_alias() {
         return sender_alias;
     }
 
@@ -44,8 +46,8 @@ public class StoryBean {
     }
 
     @DynamoDbSortKey
-    public String getDatetime() {
-        return datetime;
+    public String getTimestamp() {
+        return timestamp;
     }
 
     public List<String> getUrls() {
@@ -74,5 +76,47 @@ public class StoryBean {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    // SETTERS (necessary for DynamoDB)
+
+    public void setSender_alias(String sender_alias) {
+        this.sender_alias = sender_alias;
+    }
+
+    public void setPost(String post) {
+        this.post = post;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
+    public void setMentions(List<String> mentions) {
+        this.mentions = mentions;
+    }
+
+    public void setStatusID(String statusID) {
+        this.statusID = statusID;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

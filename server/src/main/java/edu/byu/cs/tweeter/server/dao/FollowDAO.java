@@ -15,5 +15,6 @@ public interface FollowDAO {
     int getFollowersCount(String username);
     boolean isFollower(String follower, String followee);
     void remove(String follower, String followee);
+    void clear();
 
 }

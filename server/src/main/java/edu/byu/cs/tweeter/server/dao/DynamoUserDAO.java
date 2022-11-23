@@ -26,7 +26,7 @@ public class DynamoUserDAO implements UserDAO {
         Key key = Key.builder().partitionValue(alias).build();
         UserBean bean = table.getItem(key);
         if (bean == null) return null;
-        return new User(bean.getFirstName(), bean.getLastName(), bean.getAlias(), bean.getPassword(), bean.getImageUrl());
+        return new User(bean.getFirstName(), bean.getLastName(), bean.getUsername(), bean.getPassword(), bean.getImageUrl());
     }
 
     @Override
@@ -35,5 +35,15 @@ public class DynamoUserDAO implements UserDAO {
         UserBean bean = table.getItem(key);
         if (bean == null) return false;
         return bean.getPassword().equals(password);
+    }
+
+    @Override
+    public void clear() {
+
+        // WARNING: PERFORMS SCAN (EXPENSIVE)
+        for (UserBean bean : table.scan().items()) {
+            table.deleteItem(bean);
+        }
+
     }
 }

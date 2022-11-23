@@ -199,7 +199,7 @@ public class MainPresenter extends Presenter {
     }
 
     public void postStatus(String post) {
-        Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), LocalDateTime.now(), parseURLs(post), parseMentions(post));
+        Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), LocalDateTime.now().toString(), parseURLs(post), parseMentions(post));
         sService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
     }
 

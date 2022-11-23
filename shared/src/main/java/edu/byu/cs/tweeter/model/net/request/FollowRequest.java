@@ -27,7 +27,7 @@ public class FollowRequest {
         return followee;
     }
 
-    public void setFolloweeAlias(User followee) {
+    public void setFollowee(User followee) {
         this.followee = followee;
     }
 }

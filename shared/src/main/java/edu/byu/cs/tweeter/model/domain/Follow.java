@@ -32,6 +32,14 @@ public class Follow implements Serializable {
         return followee;
     }
 
+    public void setFollower(User follower) {
+        this.follower = follower;
+    }
+
+    public void setFollowee(User followee) {
+        this.followee = followee;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

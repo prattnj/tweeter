@@ -12,7 +12,7 @@ public class FeedBean {
     private String receiver_alias;
     private String sender_alias;
     private String post;
-    private String datetime;
+    private String timestamp;
     private List<String> urls;
     private List<String> mentions;
     private String statusID;
@@ -21,12 +21,14 @@ public class FeedBean {
     private String password;
     private String imageUrl;
 
+    public FeedBean() {}
+
     public FeedBean(String viewerAlias, String creatorAlias, String post, String datetime, List<String> urls, List<String> mentions,
                     String statusID, String firstName, String lastName, String password, String imageUrl) {
         this.receiver_alias = viewerAlias;
         this.sender_alias = creatorAlias;
         this.post = post;
-        this.datetime = datetime;
+        this.timestamp = datetime;
         this.urls = urls;
         this.mentions = mentions;
         this.statusID = statusID;
@@ -37,11 +39,11 @@ public class FeedBean {
     }
 
     @DynamoDbPartitionKey
-    public String getReceiverAlias() {
+    public String getReceiver_alias() {
         return receiver_alias;
     }
 
-    public String getSenderAlias() {
+    public String getSender_alias() {
         return sender_alias;
     }
 
@@ -50,8 +52,8 @@ public class FeedBean {
     }
 
     @DynamoDbSortKey
-    public String getDatetime() {
-        return datetime;
+    public String getTimestamp() {
+        return timestamp;
     }
 
     public List<String> getUrls() {
@@ -80,5 +82,51 @@ public class FeedBean {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    // SETTERS (necessary for DynamoDB)
+
+    public void setReceiver_alias(String receiver_alias) {
+        this.receiver_alias = receiver_alias;
+    }
+
+    public void setSender_alias(String sender_alias) {
+        this.sender_alias = sender_alias;
+    }
+
+    public void setPost(String post) {
+        this.post = post;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
+    public void setMentions(List<String> mentions) {
+        this.mentions = mentions;
+    }
+
+    public void setStatusID(String statusID) {
+        this.statusID = statusID;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

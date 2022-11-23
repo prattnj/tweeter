@@ -7,5 +7,6 @@ public interface UserDAO {
     void insert(User user);
     User find(String alias);
     boolean validate(String username, String password);
+    void clear();
 
 }

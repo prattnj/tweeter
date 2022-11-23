@@ -1,6 +1,5 @@
 package edu.byu.cs.tweeter.server.dao;
 
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -14,7 +13,7 @@ public class DynamoDAOUtil {
 
     public DynamoDbEnhancedClient getClient() {
         if (eClient == null) {
-            DynamoDbClient client = DynamoDbClient.builder().credentialsProvider(ProfileCredentialsProvider.create()).region(Region.US_WEST_2).build();
+            DynamoDbClient client = DynamoDbClient.builder().region(Region.US_WEST_2).build();
             eClient = DynamoDbEnhancedClient.builder().dynamoDbClient(client).build();
         }
         return eClient;

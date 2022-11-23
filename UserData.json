@@ -1,0 +1,389 @@
+{
+  "users": [
+    {
+      "firstName": "Blake",
+      "lastName": "Montana",
+      "alias": "@blakemontana",
+      "password": "-1815711546",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Chaka",
+      "lastName": "Bieber",
+      "alias": "@chakabieber",
+      "password": "-379450943",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Snoop",
+      "lastName": "McGraw",
+      "alias": "@snoopmcgraw",
+      "password": "1575987675",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Dua",
+      "lastName": "Shmurda",
+      "alias": "@duashmurda",
+      "password": "689607776",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Snoop",
+      "lastName": "Zimmer",
+      "alias": "@snoopzimmer",
+      "password": "-1983669578",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Taylor",
+      "lastName": "Astley",
+      "alias": "@taylorastley",
+      "password": "-1904576236",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Calvin",
+      "lastName": "Lacy",
+      "alias": "@calvinlacy",
+      "password": "-61740633",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Justin",
+      "lastName": "Cube",
+      "alias": "@justincube",
+      "password": "1111724509",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kenny",
+      "lastName": "Paisley",
+      "alias": "@kennypaisley",
+      "password": "719977133",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Steve",
+      "lastName": "Mouse",
+      "alias": "@stevemouse",
+      "password": "-119667859",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Flux",
+      "lastName": "Punk",
+      "alias": "@fluxpunk",
+      "password": "-224368528",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Tame",
+      "lastName": "Smith",
+      "alias": "@tamesmith",
+      "password": "-370284721",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Dave",
+      "lastName": "World",
+      "alias": "@daveworld",
+      "password": "36184416",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Linkin",
+      "lastName": "Zimmer",
+      "alias": "@linkinzimmer",
+      "password": "-1983669578",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Fivio",
+      "lastName": "Swift",
+      "alias": "@fivioswift",
+      "password": "-97754305",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Hans",
+      "lastName": "Khan",
+      "alias": "@hanskhan",
+      "password": "-751015000",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Marshall",
+      "lastName": "McGraw",
+      "alias": "@marshallmcgraw",
+      "password": "1575987675",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Steve",
+      "lastName": "Uchis",
+      "alias": "@steveuchis",
+      "password": "-1503193746",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Hayley",
+      "lastName": "Swift",
+      "alias": "@hayleyswift",
+      "password": "-97754305",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Imagine",
+      "lastName": "Harris",
+      "alias": "@imagineharris",
+      "password": "-282420369",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Ariana",
+      "lastName": "Williams",
+      "alias": "@arianawilliams",
+      "password": "645245090",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Brendan",
+      "lastName": "Mathers",
+      "alias": "@brendanmathers",
+      "password": "1939379220",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Dave",
+      "lastName": "Jackson",
+      "alias": "@davejackson",
+      "password": "1731347455",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Alan",
+      "lastName": "Redd",
+      "alias": "@alanredd",
+      "password": "1083128671",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "French",
+      "lastName": "Chesney",
+      "alias": "@frenchchesney",
+      "password": "888357603",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "White",
+      "lastName": "Foreign",
+      "alias": "@whiteforeign",
+      "password": "2031459550",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "White",
+      "lastName": "Williams",
+      "alias": "@whitewilliams",
+      "password": "645245090",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Virtual",
+      "lastName": "Martin",
+      "alias": "@virtualmartin",
+      "password": "-672648745",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Brad",
+      "lastName": "Lamar",
+      "alias": "@bradlamar",
+      "password": "-1647897143",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Smash",
+      "lastName": "Foreign",
+      "alias": "@smashforeign",
+      "password": "2031459550",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kurt",
+      "lastName": "Scott",
+      "alias": "@kurtscott",
+      "password": "-483254541",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Tame",
+      "lastName": "Party",
+      "alias": "@tameparty",
+      "password": "1189278092",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Trippie",
+      "lastName": "Chesney",
+      "alias": "@trippiechesney",
+      "password": "888357603",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Post",
+      "lastName": "Scott",
+      "alias": "@postscott",
+      "password": "-483254541",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Imagine",
+      "lastName": "Keem",
+      "alias": "@imaginekeem",
+      "password": "-833238160",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Dua",
+      "lastName": "Foreign",
+      "alias": "@duaforeign",
+      "password": "2031459550",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Hayley",
+      "lastName": "Shelton",
+      "alias": "@hayleyshelton",
+      "password": "302232763",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Marshall",
+      "lastName": "Carti",
+      "alias": "@marshallcarti",
+      "password": "7103561",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Vanilla",
+      "lastName": "McGraw",
+      "alias": "@vanillamcgraw",
+      "password": "1575987675",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Brendan",
+      "lastName": "Montana",
+      "alias": "@brendanmontana",
+      "password": "-1815711546",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kendo",
+      "lastName": "Robinson",
+      "alias": "@kendorobinson",
+      "password": "481771914",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Ice",
+      "lastName": "Lee",
+      "alias": "@icelee",
+      "password": "-1106685786",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Baby",
+      "lastName": "Dragons",
+      "alias": "@babydragons",
+      "password": "-607485582",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kali",
+      "lastName": "Day",
+      "alias": "@kaliday",
+      "password": "-1338817258",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Michael",
+      "lastName": "Urie",
+      "alias": "@michaelurie",
+      "password": "-172501223",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Bruno",
+      "lastName": "House",
+      "alias": "@brunohouse",
+      "password": "-243784942",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kacy",
+      "lastName": "Keem",
+      "alias": "@kacykeem",
+      "password": "-833238160",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Bad",
+      "lastName": "Urie",
+      "alias": "@badurie",
+      "password": "-172501223",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Marshall",
+      "lastName": "Kaponi",
+      "alias": "@marshallkaponi",
+      "password": "1028575714",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "San",
+      "lastName": "Grohl",
+      "alias": "@sangrohl",
+      "password": "494190666",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kurt",
+      "lastName": "Shelton",
+      "alias": "@kurtshelton",
+      "password": "302232763",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kanye",
+      "lastName": "Grohl",
+      "alias": "@kanyegrohl",
+      "password": "494190666",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Brendan",
+      "lastName": "Punk",
+      "alias": "@brendanpunk",
+      "password": "-224368528",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Kendrick",
+      "lastName": "Astley",
+      "alias": "@kendrickastley",
+      "password": "-1904576236",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    },
+    {
+      "firstName": "Mac",
+      "lastName": "Mars",
+      "alias": "@macmars",
+      "password": "839437117",
+      "imageUrl": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+    }
+  ]
+}

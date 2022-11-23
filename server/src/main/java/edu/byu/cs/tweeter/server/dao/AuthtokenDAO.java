@@ -8,5 +8,6 @@ public interface AuthtokenDAO {
     boolean validate(AuthToken token);
     void remove(String token);
     String getUsername(String token);
+    void clear();
 
 }

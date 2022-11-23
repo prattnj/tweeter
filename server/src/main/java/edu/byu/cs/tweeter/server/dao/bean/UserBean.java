@@ -8,14 +8,16 @@ public class UserBean {
 
     private String firstName;
     private String lastName;
-    private String alias;
+    private String username;
     private String password;
     private String imageUrl;
 
-    public UserBean(String firstName, String lastName, String alias, String password, String imageUrl) {
+    public UserBean() {}
+
+    public UserBean(String firstName, String lastName, String username, String password, String imageUrl) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.alias = alias;
+        this.username = username;
         this.password = password;
         this.imageUrl = imageUrl;
     }
@@ -29,8 +31,8 @@ public class UserBean {
     }
 
     @DynamoDbPartitionKey
-    public String getAlias() {
-        return alias;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
@@ -39,5 +41,27 @@ public class UserBean {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    // SETTERS (necessary for DynamoDB)
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -38,7 +38,7 @@ public class UserService {
         }
 
         User user = user_dao.find(request.getUsername());
-        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), user.getAlias(), LocalDateTime.now());
+        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), user.getAlias(), LocalDateTime.now().toString());
         authtoken_dao.insert(authToken);
         return new LoginResponse(user, authToken);
     }
@@ -46,8 +46,9 @@ public class UserService {
     public LogoutResponse logout(LogoutRequest request) {
         if (request.getAuthToken() == null) {
             throw new RuntimeException("[Bad Request] Missing an authtoken");
+        } else if (!authtoken_dao.validate(request.getAuthToken())) {
+            throw new RuntimeException("[Bad Request] Invalid authtoken");
         }
-
         authtoken_dao.remove(request.getAuthToken().getUsername());
         return new LogoutResponse(true);
     }
@@ -68,7 +69,7 @@ public class UserService {
         }
 
         User user = new User(request.getFirstname(), request.getLastname(), request.getUsername(), myHash(request.getPassword()), request.getImage());
-        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), user.getAlias(), LocalDateTime.now());
+        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), user.getAlias(), LocalDateTime.now().toString());
         user_dao.insert(user);
         authtoken_dao.insert(authToken);
         // todo s3 stuff

@@ -9,5 +9,7 @@ public interface StoryDAO {
 
     void insert(Status status);
     Pair<List<Status>, Boolean> getPage(String creator, Status lastStatus, int limit);
+    void clear();
+    Status find(String username);
 
 }

@@ -13,6 +13,7 @@ public class GetUserHandler implements RequestHandler<GetUserRequest, GetUserRes
     @Override
     public GetUserResponse handleRequest(GetUserRequest request, Context context) {
         UserService service = new UserService(new DynamoAuthtokenDAO(), new DynamoUserDAO());
+        System.out.println(request.toString());
         return service.getUser(request);
     }
 }
