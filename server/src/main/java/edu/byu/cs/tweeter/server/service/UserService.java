@@ -1,6 +1,15 @@
 package edu.byu.cs.tweeter.server.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.UUID;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
@@ -68,11 +77,24 @@ public class UserService {
             throw new RuntimeException("[Bad Request] Username taken");
         }
 
-        User user = new User(request.getFirstname(), request.getLastname(), request.getUsername(), myHash(request.getPassword()), request.getImage());
+        byte[] imgBytes = Base64.getDecoder().decode(request.getImage());
+        InputStream is = new ByteArrayInputStream(imgBytes);
+
+        AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
+        String filename = request.getUsername() + "_profile";
+        String bucketname = "np275-tweeter";
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(imgBytes.length);
+        metadata.setContentType("image/jpeg");
+
+        s3.putObject(new PutObjectRequest(bucketname, filename, is, metadata).withCannedAcl(CannedAccessControlList.PublicRead));
+        String url = "https://" + bucketname + ".s3.us-west-2.amazonaws.com/" + filename;
+
+        User user = new User(request.getFirstname(), request.getLastname(), request.getUsername(), myHash(request.getPassword()), url);
         AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), user.getAlias(), LocalDateTime.now().toString());
         user_dao.insert(user);
         authtoken_dao.insert(authToken);
-        // todo s3 stuff
+
         return new RegisterResponse(user, authToken);
     }
 
@@ -91,6 +113,6 @@ public class UserService {
     }
 
     private String myHash(String password) {
-        return Integer.toString(password.hashCode()); // todo: more complex
+        return Integer.toString(password.hashCode());
     }
 }
