@@ -1,5 +1,8 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -42,7 +45,8 @@ public class StatusService {
         }
 
         Pair<List<Status>, Boolean> ret = feed_dao.getPage(request.getUserAlias(), request.getLastStatus(), request.getLimit());
-        return new GetFeedResponse(ret.getFirst(), ret.getSecond());
+        List<Status> fixed = fixDateTime(ret.getFirst());
+        return new GetFeedResponse(fixed, ret.getSecond());
     }
 
     public GetStoryResponse getStory(GetStoryRequest request) {
@@ -57,7 +61,8 @@ public class StatusService {
         }
 
         Pair<List<Status>, Boolean> ret = story_dao.getPage(request.getUserAlias(), request.getLastStatus(), request.getLimit());
-        return new GetStoryResponse(ret.getFirst(), ret.getSecond());
+        List<Status> fixed = fixDateTime(ret.getFirst());
+        return new GetStoryResponse(fixed, ret.getSecond());
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request) {
@@ -76,6 +81,14 @@ public class StatusService {
         }
 
         return new PostStatusResponse(true);
+    }
+
+    private List<Status> fixDateTime(List<Status> orig) {
+        for (Status s : orig) {
+            LocalDateTime dt = LocalDateTime.parse(s.getDatetime());
+            s.setDatetime(dt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
+        }
+        return orig;
     }
 
 }
