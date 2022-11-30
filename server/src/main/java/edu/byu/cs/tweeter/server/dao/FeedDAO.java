@@ -10,5 +10,6 @@ public interface FeedDAO {
     void insert(String receiver, Status status);
     Pair<List<Status>, Boolean> getPage(String receiver, Status lastStatus, int limit);
     void clear();
+    void scanClear();
 
 }

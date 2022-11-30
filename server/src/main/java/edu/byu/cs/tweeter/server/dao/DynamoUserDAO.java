@@ -5,13 +5,14 @@ import edu.byu.cs.tweeter.server.dao.bean.UserBean;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 public class DynamoUserDAO implements UserDAO {
 
     private final DynamoDbTable<UserBean> table;
+    private final String TABLE_NAME = "tweeter_users";
 
     public DynamoUserDAO() {
-        String TABLE_NAME = "tweeter_users";
         this.table = DynamoDAOUtil.getInstance().getClient().table(TABLE_NAME, TableSchema.fromBean(UserBean.class));
     }
 
@@ -40,7 +41,25 @@ public class DynamoUserDAO implements UserDAO {
     @Override
     public void clear() {
 
-        // WARNING: PERFORMS SCAN (EXPENSIVE)
+        // Most efficient and cheapest way is to delete the table and recreate it
+        DynamoDbWaiter waiter = DynamoDbWaiter.create();
+        table.deleteTable();
+        waiter.waitUntilTableNotExists(builder -> builder.tableName(TABLE_NAME));
+
+        table.createTable(builder -> builder
+                .provisionedThroughput(b -> b
+                        .readCapacityUnits(100L)
+                        .writeCapacityUnits(100L)
+                        .build())
+        );
+
+        waiter.waitUntilTableExists(builder -> builder.tableName(TABLE_NAME));
+
+    }
+
+    @Override
+    public void scanClear() {
+
         for (UserBean bean : table.scan().items()) {
             table.deleteItem(bean);
         }

@@ -17,16 +17,17 @@ import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 public class DynamoFollowDAO implements FollowDAO {
 
     private final DynamoDbTable<FollowBean> table;
     private final DynamoDbIndex<FollowBean> index;
+    private final String TABLE_NAME = "tweeter_follows";
 
     public DynamoFollowDAO() {
-        String TABLE_NAME = "tweeter_follows";
-        String INDEX_NAME = "tweeter_follows_index";
         this.table = DynamoDAOUtil.getInstance().getClient().table(TABLE_NAME, TableSchema.fromBean(FollowBean.class));
+        String INDEX_NAME = "tweeter_follows_index";
         this.index = table.index(INDEX_NAME);
     }
 
@@ -165,7 +166,25 @@ public class DynamoFollowDAO implements FollowDAO {
     @Override
     public void clear() {
 
-        // WARNING: PERFORMS SCAN (EXPENSIVE)
+        // Most efficient and cheapest way is to delete the table and recreate it
+        DynamoDbWaiter waiter = DynamoDbWaiter.create();
+        table.deleteTable();
+        waiter.waitUntilTableNotExists(builder -> builder.tableName(TABLE_NAME));
+
+        table.createTable(builder -> builder
+                .provisionedThroughput(b -> b
+                        .readCapacityUnits(100L)
+                        .writeCapacityUnits(100L)
+                        .build())
+        );
+
+        waiter.waitUntilTableExists(builder -> builder.tableName(TABLE_NAME));
+
+    }
+
+    @Override
+    public void scanClear() {
+
         for (FollowBean bean : table.scan().items()) {
             table.deleteItem(bean);
         }

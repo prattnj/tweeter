@@ -16,5 +16,6 @@ public interface FollowDAO {
     boolean isFollower(String follower, String followee);
     void remove(String follower, String followee);
     void clear();
+    void scanClear();
 
 }

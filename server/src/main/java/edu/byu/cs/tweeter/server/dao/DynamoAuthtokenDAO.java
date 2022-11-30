@@ -14,16 +14,17 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 public class DynamoAuthtokenDAO implements AuthtokenDAO {
 
     private final DynamoDbTable<AuthtokenBean> table;
     private final DynamoDbIndex<AuthtokenBean> index;
+    private final String TABLE_NAME = "tweeter_authtokens";
 
     public DynamoAuthtokenDAO() {
-        String TABLE_NAME = "tweeter_authtokens";
-        String INDEX_NAME = "tweeter_authtokens_index";
         table = DynamoDAOUtil.getInstance().getClient().table(TABLE_NAME, TableSchema.fromBean(AuthtokenBean.class));
+        String INDEX_NAME = "tweeter_authtokens_index";
         index = table.index(INDEX_NAME);
     }
 
@@ -71,11 +72,28 @@ public class DynamoAuthtokenDAO implements AuthtokenDAO {
     @Override
     public void clear() {
 
-        // WARNING: PERFORMS SCAN (EXPENSIVE)
+        // Most efficient and cheapest way is to delete the table and recreate it
+        DynamoDbWaiter waiter = DynamoDbWaiter.create();
+        table.deleteTable();
+        waiter.waitUntilTableNotExists(builder -> builder.tableName(TABLE_NAME));
+
+        table.createTable(builder -> builder
+                .provisionedThroughput(b -> b
+                        .readCapacityUnits(100L)
+                        .writeCapacityUnits(100L)
+                        .build())
+        );
+
+        waiter.waitUntilTableExists(builder -> builder.tableName(TABLE_NAME));
+
+    }
+
+    @Override
+    public void scanClear() {
+
         for (AuthtokenBean bean : table.scan().items()) {
             table.deleteItem(bean);
         }
 
     }
-
 }

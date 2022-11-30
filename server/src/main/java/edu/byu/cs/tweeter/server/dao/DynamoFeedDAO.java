@@ -5,27 +5,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.server.dao.bean.FeedBean;
 import edu.byu.cs.tweeter.util.Pair;
-import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 public class DynamoFeedDAO implements FeedDAO {
 
     private final DynamoDbTable<FeedBean> table;
+    private final String TABLE_NAME = "tweeter_feeds";
 
     public DynamoFeedDAO() {
-        String TABLE_NAME = "tweeter_feeds";
         this.table = DynamoDAOUtil.getInstance().getClient().table(TABLE_NAME, TableSchema.fromBean(FeedBean.class));
     }
 
@@ -74,7 +72,25 @@ public class DynamoFeedDAO implements FeedDAO {
     @Override
     public void clear() {
 
-        // WARNING: PERFORMS SCAN (EXPENSIVE)
+        // Most efficient and cheapest way is to delete the table and recreate it
+        DynamoDbWaiter waiter = DynamoDbWaiter.create();
+        table.deleteTable();
+        waiter.waitUntilTableNotExists(builder -> builder.tableName(TABLE_NAME));
+
+        table.createTable(builder -> builder
+                .provisionedThroughput(b -> b
+                        .readCapacityUnits(100L)
+                        .writeCapacityUnits(100L)
+                        .build())
+        );
+
+        waiter.waitUntilTableExists(builder -> builder.tableName(TABLE_NAME));
+
+    }
+
+    @Override
+    public void scanClear() {
+
         for (FeedBean bean : table.scan().items()) {
             table.deleteItem(bean);
         }

@@ -9,5 +9,6 @@ public interface AuthtokenDAO {
     void remove(String token);
     String getUsername(String token);
     void clear();
+    void scanClear();
 
 }

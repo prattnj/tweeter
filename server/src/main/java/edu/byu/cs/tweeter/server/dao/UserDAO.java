@@ -8,5 +8,6 @@ public interface UserDAO {
     User find(String alias);
     boolean validate(String username, String password);
     void clear();
+    void scanClear();
 
 }

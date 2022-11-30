@@ -17,13 +17,14 @@ import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 public class DynamoStoryDAO implements StoryDAO {
 
     private final DynamoDbTable<StoryBean> table;
+    private final String TABLE_NAME = "tweeter_stories";
 
     public DynamoStoryDAO() {
-        String TABLE_NAME = "tweeter_stories";
         this.table = DynamoDAOUtil.getInstance().getClient().table(TABLE_NAME, TableSchema.fromBean(StoryBean.class));
     }
 
@@ -71,10 +72,19 @@ public class DynamoStoryDAO implements StoryDAO {
     @Override
     public void clear() {
 
-        // WARNING: PERFORMS SCAN (EXPENSIVE)
-        for (StoryBean bean : table.scan().items()) {
-            table.deleteItem(bean);
-        }
+        // Most efficient and cheapest way is to delete the table and recreate it
+        DynamoDbWaiter waiter = DynamoDbWaiter.create();
+        table.deleteTable();
+        waiter.waitUntilTableNotExists(builder -> builder.tableName(TABLE_NAME));
+
+        table.createTable(builder -> builder
+                .provisionedThroughput(b -> b
+                        .readCapacityUnits(100L)
+                        .writeCapacityUnits(100L)
+                        .build())
+        );
+
+        waiter.waitUntilTableExists(builder -> builder.tableName(TABLE_NAME));
 
     }
 
@@ -86,5 +96,14 @@ public class DynamoStoryDAO implements StoryDAO {
         StoryBean bean = beans.get(0);
         return new Status(bean.getPost(), new User(bean.getFirstName(), bean.getLastName(), bean.getSender_alias(),
                 bean.getPassword(), bean.getImageUrl()), bean.getTimestamp(), bean.getUrls(), bean.getMentions());
+    }
+
+    @Override
+    public void scanClear() {
+
+        for (StoryBean bean : table.scan().items()) {
+            table.deleteItem(bean);
+        }
+
     }
 }
