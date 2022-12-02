@@ -13,6 +13,8 @@ arr=(
         "poststatus"
         "register"
         "unfollow"
+        "tweeter_sqs_getfollowers"
+        "tweeter_sqs_addstatus"
     )
 for FUNCTION_NAME in "${arr[@]}"
 do

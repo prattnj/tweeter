@@ -38,6 +38,11 @@ public class DynamoStoryDAO implements StoryDAO {
     }
 
     @Override
+    public void insertGroup(List<Status> statuses) {
+
+    }
+
+    @Override
     public Pair<List<Status>, Boolean> getPage(String creator, Status lastStatus, int limit) {
         Key key = Key.builder().partitionValue(creator).build();
 
@@ -70,6 +75,16 @@ public class DynamoStoryDAO implements StoryDAO {
     }
 
     @Override
+    public Status find(String username) {
+        Key key = Key.builder().partitionValue(username).build();
+        QueryConditional qc = QueryConditional.keyEqualTo(key);
+        List<StoryBean> beans = table.query(qc).items().stream().collect(Collectors.toList());
+        StoryBean bean = beans.get(0);
+        return new Status(bean.getPost(), new User(bean.getFirstName(), bean.getLastName(), bean.getSender_alias(),
+                bean.getPassword(), bean.getImageUrl()), bean.getTimestamp(), bean.getUrls(), bean.getMentions());
+    }
+
+    @Override
     public void clear() {
 
         // Most efficient and cheapest way is to delete the table and recreate it
@@ -86,16 +101,6 @@ public class DynamoStoryDAO implements StoryDAO {
 
         waiter.waitUntilTableExists(builder -> builder.tableName(TABLE_NAME));
 
-    }
-
-    @Override
-    public Status find(String username) {
-        Key key = Key.builder().partitionValue(username).build();
-        QueryConditional qc = QueryConditional.keyEqualTo(key);
-        List<StoryBean> beans = table.query(qc).items().stream().collect(Collectors.toList());
-        StoryBean bean = beans.get(0);
-        return new Status(bean.getPost(), new User(bean.getFirstName(), bean.getLastName(), bean.getSender_alias(),
-                bean.getPassword(), bean.getImageUrl()), bean.getTimestamp(), bean.getUrls(), bean.getMentions());
     }
 
     @Override

@@ -18,11 +18,14 @@ dependencies {
     implementation project(path: ':shared')
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     implementation group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '1.2.0'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: '1.12.346'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: '1.12.353'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.12.346'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.346'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.347'
     implementation group: 'software.amazon.awssdk', name: 'dynamodb-enhanced', version: '2.18.21'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.347'
+    implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.353'
+    implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
+
 
     // Testing related dependencies
 

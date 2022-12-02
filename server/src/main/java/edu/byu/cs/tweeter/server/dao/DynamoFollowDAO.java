@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.server.dao.bean.FollowBean;
 import edu.byu.cs.tweeter.util.Pair;
@@ -13,9 +14,12 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteResult;
 import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
@@ -37,6 +41,58 @@ public class DynamoFollowDAO implements FollowDAO {
                 follower.getPassword(), follower.getImageUrl(), followee.getFirstName(), followee.getLastName(), followee.getPassword(),
                 followee.getImageUrl());
         table.putItem(bean);
+    }
+
+    @Override
+    public void insertGroup(List<Follow> follows) {
+
+        List<FollowBean> allBeans = new ArrayList<>();
+        for (Follow f : follows) {
+            User f1 = f.getFollower();
+            User f2 = f.getFollowee();
+            allBeans.add(new FollowBean(f1.getAlias(), f2.getAlias(), f1.getFirstName(), f1.getLastName(), f1.getPassword(), f1.getImageUrl(),
+                    f2.getFirstName(), f2.getLastName(), f2.getPassword(), f2.getImageUrl()));
+        }
+        List<List<FollowBean>> groups = new ArrayList<>();
+
+        // Organize into groups, max size 25
+        int groupSize = 25;
+        int numGroups = allBeans.size() / groupSize;
+        if (allBeans.size() % groupSize != 0) numGroups++;
+        for (int i = 0; i < numGroups; i++) {
+            int startingIndex = i * groupSize;
+            List<FollowBean> tempList = new ArrayList<>();
+            for (int j = startingIndex; j < groupSize + startingIndex; j++) {
+                if (j > allBeans.size() - 1) break;
+                tempList.add(allBeans.get(j));
+            }
+            groups.add(tempList);
+        }
+
+        int progress = 1;
+        for (List<FollowBean> beans : groups) {
+            System.out.println("Writing follows group " + progress + "/" + groups.size());
+            insertChunkOfBeans(beans);
+            progress++;
+        }
+
+    }
+
+    private void insertChunkOfBeans(List<FollowBean> beans) {
+
+        WriteBatch.Builder<FollowBean> test = WriteBatch.builder(FollowBean.class)
+                .mappedTableResource(table);
+        for (FollowBean bean : beans) {
+            test.addPutItem(bean);
+        }
+        BatchWriteItemEnhancedRequest req = BatchWriteItemEnhancedRequest.builder()
+                .writeBatches(test.build())
+                .build();
+        BatchWriteResult result = DynamoDAOUtil.getInstance().getClient().batchWriteItem(req);
+        if (result.unprocessedPutItemsForTable(table).size() > 0) {
+            insertChunkOfBeans(result.unprocessedPutItemsForTable(table));
+        }
+
     }
 
     @Override

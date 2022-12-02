@@ -7,14 +7,13 @@ import edu.byu.cs.tweeter.model.net.request.GetFeedRequest;
 import edu.byu.cs.tweeter.model.net.response.GetFeedResponse;
 import edu.byu.cs.tweeter.server.dao.DynamoAuthtokenDAO;
 import edu.byu.cs.tweeter.server.dao.DynamoFeedDAO;
-import edu.byu.cs.tweeter.server.dao.DynamoFollowDAO;
 import edu.byu.cs.tweeter.server.dao.DynamoStoryDAO;
 import edu.byu.cs.tweeter.server.service.StatusService;
 
 public class GetFeedHandler implements RequestHandler<GetFeedRequest, GetFeedResponse> {
     @Override
     public GetFeedResponse handleRequest(GetFeedRequest request, Context context) {
-        StatusService service = new StatusService(new DynamoFeedDAO(), new DynamoStoryDAO(), new DynamoFollowDAO(), new DynamoAuthtokenDAO());
+        StatusService service = new StatusService(new DynamoFeedDAO(), new DynamoStoryDAO(), new DynamoAuthtokenDAO());
         return service.getFeed(request);
     }
 }

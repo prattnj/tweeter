@@ -13,8 +13,11 @@ import edu.byu.cs.tweeter.util.Pair;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteResult;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
@@ -34,6 +37,57 @@ public class DynamoFeedDAO implements FeedDAO {
                 status.getUser().getFirstName(), status.getUser().getLastName(), status.getUser().getPassword(),
                 status.getUser().getImageUrl());
         table.putItem(bean);
+    }
+
+    @Override
+    public void insertGroup(List<String> receivers, Status status) {
+
+        List<FeedBean> allBeans = new ArrayList<>();
+        for (String receiver : receivers) allBeans.add(new FeedBean(receiver, status.getUser().getAlias(), status.getPost(),
+                status.getDatetime(), status.getUrls(), status.getMentions(), status.getStatusID(), status.getUser().getFirstName(),
+                status.getUser().getLastName(), status.getUser().getPassword(), status.getUser().getImageUrl()));
+        List<List<FeedBean>> groups = new ArrayList<>();
+
+        // Organize into groups, max size 25
+        int groupSize = 25;
+        int numGroups = allBeans.size() / groupSize;
+        if (allBeans.size() % groupSize != 0) numGroups++;
+        for (int i = 0; i < numGroups; i++) {
+            int startingIndex = i * groupSize;
+            List<FeedBean> tempList = new ArrayList<>();
+            for (int j = startingIndex; j < groupSize + startingIndex; j++) {
+                if (j > allBeans.size() - 1) break;
+                tempList.add(allBeans.get(j));
+            }
+            groups.add(tempList);
+        }
+
+        System.out.println("debug");
+
+        int progress = 1;
+        for (List<FeedBean> beans : groups) {
+            System.out.println("Writing feed group " + progress + "/" + groups.size());
+            insertChunkOfBeans(beans);
+            progress++;
+        }
+
+    }
+
+    private void insertChunkOfBeans(List<FeedBean> beans) {
+
+        WriteBatch.Builder<FeedBean> test = WriteBatch.builder(FeedBean.class)
+                .mappedTableResource(table);
+        for (FeedBean bean : beans) {
+            test.addPutItem(bean);
+        }
+        BatchWriteItemEnhancedRequest req = BatchWriteItemEnhancedRequest.builder()
+                .writeBatches(test.build())
+                .build();
+        BatchWriteResult result =  DynamoDAOUtil.getInstance().getClient().batchWriteItem(req);
+        if (result.unprocessedPutItemsForTable(table).size() > 0) {
+            insertChunkOfBeans(result.unprocessedPutItemsForTable(table));
+        }
+
     }
 
     @Override

@@ -1,10 +1,16 @@
 package edu.byu.cs.tweeter.server.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.server.dao.bean.UserBean;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteResult;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
 import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 public class DynamoUserDAO implements UserDAO {
@@ -20,6 +26,55 @@ public class DynamoUserDAO implements UserDAO {
     public void insert(User user) {
         UserBean bean = new UserBean(user.getFirstName(), user.getLastName(), user.getAlias(), user.getPassword(), user.getImageUrl());
         table.putItem(bean);
+    }
+
+    @Override
+    public void insertGroup(List<User> users) {
+
+        List<UserBean> allBeans = new ArrayList<>();
+        for (User user : users) allBeans.add(new UserBean(user.getFirstName(), user.getLastName(), user.getAlias(), user.getPassword(), user.getImageUrl()));
+        List<List<UserBean>> groups = new ArrayList<>();
+
+        // Organize into groups, max size 25
+        int groupSize = 25;
+        int numGroups = allBeans.size() / groupSize;
+        if (allBeans.size() % groupSize != 0) numGroups++;
+        for (int i = 0; i < numGroups; i++) {
+            int startingIndex = i * groupSize;
+            List<UserBean> tempList = new ArrayList<>();
+            for (int j = startingIndex; j < groupSize + startingIndex; j++) {
+                if (j > allBeans.size() - 1) break;
+                tempList.add(allBeans.get(j));
+            }
+            groups.add(tempList);
+        }
+
+        System.out.println("debug");
+
+        int progress = 1;
+        for (List<UserBean> beans : groups) {
+            System.out.println("Writing users group " + progress + "/" + groups.size());
+            insertChunkOfBeans(beans);
+            progress++;
+        }
+
+    }
+
+    private void insertChunkOfBeans(List<UserBean> beans) {
+
+        WriteBatch.Builder<UserBean> test = WriteBatch.builder(UserBean.class)
+                .mappedTableResource(table);
+        for (UserBean bean : beans) {
+            test.addPutItem(bean);
+        }
+        BatchWriteItemEnhancedRequest req = BatchWriteItemEnhancedRequest.builder()
+                .writeBatches(test.build())
+                .build();
+        BatchWriteResult result =  DynamoDAOUtil.getInstance().getClient().batchWriteItem(req);
+        if (result.unprocessedPutItemsForTable(table).size() > 0) {
+            insertChunkOfBeans(result.unprocessedPutItemsForTable(table));
+        }
+
     }
 
     @Override
@@ -60,8 +115,11 @@ public class DynamoUserDAO implements UserDAO {
     @Override
     public void scanClear() {
 
+        int progress = 1;
         for (UserBean bean : table.scan().items()) {
+            System.out.println("Clearing: " + progress);
             table.deleteItem(bean);
+            progress++;
         }
 
     }

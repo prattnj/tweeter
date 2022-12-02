@@ -8,6 +8,7 @@ import edu.byu.cs.tweeter.util.Pair;
 public interface FeedDAO {
 
     void insert(String receiver, Status status);
+    void insertGroup(List<String> receivers, Status status);
     Pair<List<Status>, Boolean> getPage(String receiver, Status lastStatus, int limit);
     void clear();
     void scanClear();
