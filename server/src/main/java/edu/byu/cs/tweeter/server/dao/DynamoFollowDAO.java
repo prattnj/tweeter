@@ -104,7 +104,7 @@ public class DynamoFollowDAO implements FollowDAO {
         PageIterable<FollowBean> pages = PageIterable.create(index.query(queryConditional));
         List<FollowBean> beans = new ArrayList<>();
 
-        pages.stream().limit(1).forEach(page -> beans.addAll(page.items()));
+        pages.stream().limit(3).forEach(page -> beans.addAll(page.items()));
 
         List<User> users = new ArrayList<>();
         for (FollowBean b : beans) {
@@ -174,7 +174,7 @@ public class DynamoFollowDAO implements FollowDAO {
 
         PageIterable<FollowBean> pages = PageIterable.create(index.query(request));
         pages.stream()
-                .limit(1)
+                .limit(10)
                 .forEach(visitsPage -> beans.addAll(visitsPage.items()));
 
         List<User> users = new ArrayList<>();
@@ -203,7 +203,7 @@ public class DynamoFollowDAO implements FollowDAO {
 
         List<FollowBean> beans = new ArrayList<>();
         PageIterable<FollowBean> pages = PageIterable.create(index.query(queryConditional));
-        pages.stream().limit(1).forEach(page -> beans.addAll(page.items()));
+        pages.stream().limit(10).forEach(page -> beans.addAll(page.items()));
 
         return beans.size();
     }
@@ -241,8 +241,11 @@ public class DynamoFollowDAO implements FollowDAO {
     @Override
     public void scanClear() {
 
+        int progress = 1;
         for (FollowBean bean : table.scan().items()) {
+            System.out.println("Clearing: " + progress);
             table.deleteItem(bean);
+            progress++;
         }
 
     }

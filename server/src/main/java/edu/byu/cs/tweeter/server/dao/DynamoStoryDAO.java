@@ -64,7 +64,7 @@ public class DynamoStoryDAO implements StoryDAO {
         PageIterable<StoryBean> results = table.query(request);
         List<StoryBean> beans = new ArrayList<>();
         List<Status> actual = new ArrayList<>();
-        results.stream().limit(1).forEach(visitsPage -> beans.addAll(visitsPage.items()));
+        results.stream().limit(10).forEach(visitsPage -> beans.addAll(visitsPage.items()));
         for (StoryBean b : beans) {
             Status s = new Status(b.getPost(), new User(b.getFirstName(), b.getLastName(), b.getSender_alias(),
                     b.getPassword(), b.getImageUrl()), b.getTimestamp(), b.getUrls(), b.getMentions());

@@ -8,9 +8,9 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class SQSFollowerData {
 
     private Status status;
-    private List<User> followers;
+    private List<String> followers;
 
-    public SQSFollowerData(Status status, List<User> followers) {
+    public SQSFollowerData(Status status, List<String> followers) {
         this.status = status;
         this.followers = followers;
     }
@@ -23,11 +23,11 @@ public class SQSFollowerData {
         this.status = status;
     }
 
-    public List<User> getFollowers() {
+    public List<String> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<User> followers) {
+    public void setFollowers(List<String> followers) {
         this.followers = followers;
     }
 }

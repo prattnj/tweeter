@@ -23,12 +23,13 @@ import edu.byu.cs.tweeter.server.dao.DynamoUserDAO;
 
 public class M4BMain {
 
-    private static final int numUsers = 10000;
+    // 10,000 + small buffer
+    private static final int numUsers = 10015;
     private static final String outFileName = "fullnames.json";
 
     public static void main(String[] args) throws IOException {
 
-        //buildJson();
+        buildJson();
         addAllUsers();
 
     }
@@ -70,7 +71,6 @@ public class M4BMain {
         List<String> fullNames = new ArrayList<>();
 
         // no higher than 100,000 (based on nba_data.txt)
-        int numUsers = 10000;
 
         File raw = new File("nba_data.txt");
         Scanner scanner = new Scanner(raw);

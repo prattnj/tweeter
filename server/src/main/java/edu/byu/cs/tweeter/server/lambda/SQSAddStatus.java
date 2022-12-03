@@ -19,9 +19,7 @@ public class SQSAddStatus implements RequestHandler<SQSEvent, Void> {
         for (SQSEvent.SQSMessage msg : input.getRecords()) {
 
             SQSFollowerData data = new Gson().fromJson(msg.getBody(), SQSFollowerData.class);
-            List<String> receivers = new ArrayList<>();
-            for (User u : data.getFollowers()) receivers.add(u.getAlias());
-            new DynamoFeedDAO().insertGroup(receivers, data.getStatus());
+            new DynamoFeedDAO().insertGroup(data.getFollowers(), data.getStatus());
 
         }
 

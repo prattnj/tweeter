@@ -30,6 +30,10 @@ public class SQSGetFollowers implements RequestHandler<SQSEvent, Void> {
             List<List<User>> groups = new ArrayList<>();
             List<User> followers = new DynamoFollowDAO().getAllFollowers(status.getUser().getAlias());
 
+            System.out.println("---------------------------------");
+            System.out.println("FOLLOWERS COUNT: " + followers.size() + " (" + status.getUser().getAlias() + ")");
+            System.out.println("---------------------------------");
+
             int groupSize = 25;
             int numGroups = followers.size() / groupSize;
             if (followers.size() % groupSize != 0) numGroups++;
@@ -43,9 +47,19 @@ public class SQSGetFollowers implements RequestHandler<SQSEvent, Void> {
                 groups.add(tempList);
             }
 
+            System.out.println("LISTS: ");
+            int progress = 1;
+            for (List<User> group : groups) {
+                System.out.println("Group #" + progress + ": " + group.size());
+                progress++;
+            }
+
             for (List<User> group : groups) {
 
-                SQSFollowerData data = new SQSFollowerData(status, group);
+                List<String> receivers = new ArrayList<>();
+                for (User u : group) receivers.add(u.getAlias());
+
+                SQSFollowerData data = new SQSFollowerData(status, receivers);
 
                 SendMessageRequest req = new SendMessageRequest()
                         .withQueueUrl(queueURL)
