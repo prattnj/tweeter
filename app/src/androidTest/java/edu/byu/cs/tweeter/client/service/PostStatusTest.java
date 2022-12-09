@@ -63,6 +63,9 @@ public class PostStatusTest {
         // Verify post status results
         assertTrue(postStatusObserver.success); // if this passes, then the "Successfully posted status!" toast pops up
 
+        // Since post status returns before it is added to the story due to SQS, we need to wait a bit
+        Thread.sleep(1000);
+
         // Perform get story (only succeeds if the user has less than 11 statuses total in their story)
         statusServiceSpy.loadMore_Story(token, user, 10, null, getStoryObserver);
         awaitCountDownLatch();
