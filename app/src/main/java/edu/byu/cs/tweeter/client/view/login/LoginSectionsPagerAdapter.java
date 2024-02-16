@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import edu.byu.cs.client.R;
 
+
 /**
  * Used by LoginActivity to implement the "login" and "register" tabs.
  */

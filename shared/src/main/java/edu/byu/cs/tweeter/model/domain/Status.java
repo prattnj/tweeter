@@ -11,23 +11,25 @@ public class Status implements Serializable {
     /**
      * Text for the status.
      */
-    public String post;
+    private String post;
     /**
      * User who sent the status.
      */
-    public User user;
+    private User user;
     /**
      * String representation of the date/time at which the status was sent.
      */
-    public String datetime;
+    private String datetime;
     /**
      * URLs contained in the post text.
      */
-    public List<String> urls;
+    private List<String> urls;
     /**
      * User mentions contained in the post text.
      */
-    public List<String> mentions;
+    private List<String> mentions;
+
+    private String statusID;
 
     public Status() {
     }
@@ -38,6 +40,7 @@ public class Status implements Serializable {
         this.datetime = datetime;
         this.urls = urls;
         this.mentions = mentions;
+        this.statusID = user.getAlias() + datetime;
     }
 
     public void setUser(User user) {
@@ -46,10 +49,6 @@ public class Status implements Serializable {
 
     public User getUser() {
         return user;
-    }
-
-    public String getDate() {
-        return datetime;
     }
 
     public String getPost() {
@@ -64,6 +63,34 @@ public class Status implements Serializable {
         return mentions;
     }
 
+    public String getStatusID() {
+        return statusID;
+    }
+
+    public void setPost(String post) {
+        this.post = post;
+    }
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
+    public void setMentions(List<String> mentions) {
+        this.mentions = mentions;
+    }
+
+    public void setStatusID(String statusID) {
+        this.statusID = statusID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,7 +98,7 @@ public class Status implements Serializable {
         Status status = (Status) o;
         return Objects.equals(post, status.post) &&
                 Objects.equals(user, status.user) &&
-                Objects.equals(datetime, status.datetime) &&
+                /*Objects.equals(datetime, status.datetime) &&*/
                 Objects.equals(mentions, status.mentions) &&
                 Objects.equals(urls, status.urls);
     }

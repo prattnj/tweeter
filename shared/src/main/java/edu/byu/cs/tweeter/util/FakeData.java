@@ -1,8 +1,10 @@
 package edu.byu.cs.tweeter.util;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -120,9 +122,9 @@ public class FakeData {
             for (int j = 0; j < fakeUsers.size(); ++j) {
                 User sender = fakeUsers.get(j);
                 User mention = ((j < fakeUsers.size() - 1) ? fakeUsers.get(j + 1) : fakeUsers.get(0));
-                List<String> mentions = Arrays.asList(mention.getAlias());
+                List<String> mentions = Collections.singletonList(mention.getAlias());
                 String url = "https://byu.edu";
-                List<String> urls = Arrays.asList(url);
+                List<String> urls = Collections.singletonList(url);
                 String post = "Post " + i + " " + j +
                         "\nMy friend " + mention.getAlias() + " likes this website" +
                         "\n" + url;
@@ -145,7 +147,8 @@ public class FakeData {
     }
 
     public AuthToken getAuthToken() {
-        return authToken;
+        return new AuthToken("faketoken", "fakealias", LocalDateTime.now().toString());
+        //return authToken;
     }
 
     public User findUserByAlias(String alias) {
@@ -161,22 +164,22 @@ public class FakeData {
     /**
      * Returns a page of users (followers or followees)
      *
-     * @param lastUser the last user returned in the previous page of results.
+     * @param lastUserAlias the last user's alias returned in the previous page of results.
      * @param limit    maximum number of users to return (i.e., page size).
      * @param omit     if not null, specifies a user that should not be returned.
      * @return a Pair containing a page of users and a "hasMorePages" flag.
      */
-    public Pair<List<User>, Boolean> getPageOfUsers(User lastUser, int limit, User omit) {
+    public Pair<List<User>, Boolean> getPageOfUsers(String lastUserAlias, int limit, String omit) {
 
-        Pair<List<User>, Boolean> result = new Pair<>(new ArrayList<User>(), false);
+        Pair<List<User>, Boolean> result = new Pair<>(new ArrayList<>(), false);
 
         int index = 0;
         List<User> fakeUsers = getFakeUsers();
 
-        if (lastUser != null) {
+        if (lastUserAlias != null) {
             for (int i = 0; i < fakeUsers.size(); ++i) {
                 User curUser = fakeUsers.get(i);
-                if (curUser.getAlias().equals(lastUser.getAlias())) {
+                if (curUser.getAlias().equals(lastUserAlias)) {
                     index = i + 1;
                     break;
                 }
@@ -185,7 +188,7 @@ public class FakeData {
 
         for (int count = 0; index < fakeUsers.size() && count < limit; ++count, ++index) {
             User curUser = fakeUsers.get(index);
-            if (omit == null || !curUser.getAlias().equals(omit.getAlias())) {
+            if (!curUser.getAlias().equals(omit)) {
                 result.getFirst().add(curUser);
             }
         }
@@ -214,7 +217,7 @@ public class FakeData {
             for (int i = 0; i < fakeStatuses.size(); ++i) {
                 Status curStatus = fakeStatuses.get(i);
                 if (curStatus.getUser().getAlias().equals(lastStatus.getUser().getAlias()) &&
-                        curStatus.getDate().equals(lastStatus.getDate())) {
+                        curStatus.getDatetime().equals(lastStatus.getDatetime())) {
                     index = i + 1;
                     break;
                 }
@@ -240,5 +243,4 @@ public class FakeData {
     public List<Status> getFakeStatuses() {
         return allStatuses;
     }
-
 }

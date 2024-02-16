@@ -1,84 +1,54 @@
 package edu.byu.cs.tweeter.client.backgroundTask;
 
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
+import java.io.IOException;
+
+import edu.byu.cs.tweeter.client.backgroundTask.abstract_task.AuthenticatedTask;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
+import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
+import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 
 /**
  * Background task that posts a new status sent by a user.
  */
-public class PostStatusTask implements Runnable {
+public class PostStatusTask extends AuthenticatedTask {
+
+    private static final String URL_PATH = "/poststatus";
     private static final String LOG_TAG = "PostStatusTask";
 
-    public static final String SUCCESS_KEY = "success";
-    public static final String MESSAGE_KEY = "message";
-    public static final String EXCEPTION_KEY = "exception";
-
-    /**
-     * Auth token for logged-in user.
-     */
-    private AuthToken authToken;
     /**
      * The new status being sent. Contains all properties of the status,
      * including the identity of the user sending the status.
      */
-    private Status status;
-    /**
-     * Message handler that will receive task results.
-     */
-    private Handler messageHandler;
+    private final Status status;
 
     public PostStatusTask(AuthToken authToken, Status status, Handler messageHandler) {
-        this.authToken = authToken;
+        super(authToken, messageHandler);
         this.status = status;
-        this.messageHandler = messageHandler;
     }
 
     @Override
-    public void run() {
+    protected void runTask() {
+
         try {
 
-            sendSuccessMessage();
+            PostStatusRequest request = new PostStatusRequest(authToken, status);
+            PostStatusResponse response = getServerFacade().postStatus(request, URL_PATH);
 
-        } catch (Exception ex) {
-            Log.e(LOG_TAG, ex.getMessage(), ex);
+            if (response.isSuccess()) {
+                sendSuccessMessage();
+            } else {
+                sendFailedMessage(response.getMessage());
+            }
+
+        } catch (IOException | TweeterRemoteException ex) {
+            Log.e(LOG_TAG, "Failed to post status", ex);
             sendExceptionMessage(ex);
         }
     }
 
-    private void sendSuccessMessage() {
-        Bundle msgBundle = new Bundle();
-        msgBundle.putBoolean(SUCCESS_KEY, true);
-
-        Message msg = Message.obtain();
-        msg.setData(msgBundle);
-
-        messageHandler.sendMessage(msg);
-    }
-
-    private void sendFailedMessage(String message) {
-        Bundle msgBundle = new Bundle();
-        msgBundle.putBoolean(SUCCESS_KEY, false);
-        msgBundle.putString(MESSAGE_KEY, message);
-
-        Message msg = Message.obtain();
-        msg.setData(msgBundle);
-
-        messageHandler.sendMessage(msg);
-    }
-
-    private void sendExceptionMessage(Exception exception) {
-        Bundle msgBundle = new Bundle();
-        msgBundle.putBoolean(SUCCESS_KEY, false);
-        msgBundle.putSerializable(EXCEPTION_KEY, exception);
-
-        Message msg = Message.obtain();
-        msg.setData(msgBundle);
-
-        messageHandler.sendMessage(msg);
-    }
 }

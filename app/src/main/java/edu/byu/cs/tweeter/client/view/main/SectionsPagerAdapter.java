@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.client.view.main;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -10,10 +11,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.view.main.feed.FeedFragment;
-import edu.byu.cs.tweeter.client.view.main.followers.FollowersFragment;
-import edu.byu.cs.tweeter.client.view.main.following.FollowingFragment;
-import edu.byu.cs.tweeter.client.view.main.story.StoryFragment;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
@@ -45,6 +42,7 @@ class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
+        Log.d("SectionsPagerAdapter", "got here");
         if (this.user.compareTo(Cache.getInstance().getCurrUser()) == 0) {
             if (position == REGULAR_FEED_FRAGMENT_POSITION) {
                 return FeedFragment.newInstance(user);

@@ -2,7 +2,6 @@ package edu.byu.cs.tweeter.client.view.login;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,18 +40,10 @@ public class StatusDialogFragment extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.status_dialog, null);
 
         builder.setView(view)
-                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setNegativeButton("Close", (dialog, which) -> {
 
-                    }
                 })
-                .setPositiveButton("POST STATUS", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        observer.onStatusPosted(post.getText().toString());
-                    }
-                });
+                .setPositiveButton("POST STATUS", (dialog, which) -> observer.onStatusPosted(post.getText().toString()));
 
         fullName = view.findViewById(R.id.dialogFullName);
         fullName.setText(Cache.getInstance().getCurrUser().getName());
@@ -94,7 +85,7 @@ public class StatusDialogFragment extends AppCompatDialogFragment {
         try {
             observer = (Observer) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement the StatusDialogFragment.Observer");
+            throw new ClassCastException(context + " must implement the StatusDialogFragment.Observer");
         }
     }
 
